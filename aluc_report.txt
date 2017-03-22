@@ -1,0 +1,55 @@
+Anthony Luc
+Lab 6: report.txt
+March 22, 2017
+
+
+Time log:
+-----------------------------------
+|  Number of Hours  |    Date     |
+|-------------------|-------------|
+|       .5			|	March 19  |
+|-------------------|-------------|
+|        1			|	March 20  |
+|-------------------|-------------|
+|		 3			|   March 21  |
+|-------------------|-------------|
+|		 1			|   March 22  |
+-----------------------------------
+
+
+Documentation:
+
+March 19:
+	I spent about thirty minutes playing with the GRAPH API for Facebook. I learned how to customize the access tokens to alter what user-sensitive data can be pulled from the API.
+
+March 20:
+	I continued to look at the GRAPH API to determine how to get the friend's list data. I spent most of the time researching why I was not getting a completely populated list of friends, and it seemed as though that such is no longer supported by the GRAPH API. In the past, getting an entire list of friends was possible, but this is deprecated because Facebook updated it to be: you can view other friends on the GRAPH API if they are also on the GRAPH API. It seems that in order to have access to view friends, they must "allow the app" to view their data. In other words, the only way to see friends on the GRAPH API is if they are also "on" and "using" the app.
+
+March 21:
+	I watched a ~3-hr video tutorial that showed how to use Python to get photo data from the Facebook API. The idea is to be able to adapt his code from getting photo data to getting friend data and analyzing it. It's setup as a "Watch People Code", so the person was making mistakes here and there. However, seeing how he troubleshoots and analyzes documentation was good for me because I got to pick up a few pointers. This tutorial took up the majority of the time (about two hours) - even though I skipped around to find the important parts - and I learned and understood how his code works. However, again I realized that although his video may be applicable to our project, I was limited by which friends were also "on the app".
+
+	I also quickly watched a video in regards to setting up an app for Facebook - like learning what information is necessary once an app is registered. I searched this video up in order to find out more on the perhaps likelihood of needing to make an "app" to actually get Facebook data.
+
+	In the last hour or so, I tried to implement a Python script that is adapted to get data (for now, data such as "favourite teams").
+
+March 22:
+	I continued working on the Python script to see if I could actually print out the user's "Favorite Teams", but it seems that I could not get the urllib request to work.
+
+
+What my script does internally:
+	Given the Facebook API Key as a bash/shell environment variable, the script will get the user's data, loading in the Facebook JSON data. Once the data is returned, the information is parsed for just the "favorite teams" information and then prints it.
+
+
+Problems Restated:
+	It seems that the only data that is available is from those who "agree to share" by joining the "app" or GRAPH app.
+		This is because the GRAPH API on v2.0 and above no longer supports seeing the entire friends list (perhaps this is due to security).
+	I had some issues adapting the person's code.
+	The API Key needs to be updated each time if it gets expired.
+
+
+
+Question:
+	I'm not sure if perhaps we should switch to a project relating to reddit as user data is not hidden as much as it is on the Facebook GRAPH API. Originally, we had wanted to get friend list data, but this doesn't seem possible. Even if we did try to get friend data, it seems like we'd need to really dive into "making an app". So that's why my group and I are considering switching to a project using reddit. Where should we go from here?
+
+
+
