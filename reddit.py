@@ -14,6 +14,7 @@ url = requests.get(web_address,headers=headers).json()
 
 print url
 
+# priority_queue section:
 '''COUNT = 1
 i = 0
 while COUNT <= LIMIT:
