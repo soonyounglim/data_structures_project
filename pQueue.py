@@ -15,16 +15,55 @@
 ###
 
 
+
+# Future # # # # # # # # # # # # # # # # # # #
+# Handle Separate Queues for Comments and Posts
+# 
+
+
 # Imported Libraries
+import io
 import os
+import sys
 from Queue import PriorityQueue
 
-
 # Global Variables
-myPQ = Queue.PriorityQueue
+STREAM 		= ''
+myPQ 		= PriorityQueue
+
+# Functions
+def usage(exit_code=0):
+	print '''Usage: {} [-s stream]
+	-s stream   Input stream'''.format(os.path.basename(sys.argv[0]))
+	sys.exit(exit_code)
+
+if __name__ == '__main__':
+	# Parse command line arguments
+	args = sys.argv[1:]
+	while len(args) and args[0].startswith('-') and len(args[0]) > 1:
+		arg = args.pop(0)
+		if arg == '-h':
+			usage(0)
+		elif arg == '-p':
+			PREFIX = args.pop(0)			# Get the prefix
+		elif arg == '-s':
+			HASHES = args.pop(0)			# Get the path of the hashs file
+		else:
+			usage(1)
+
+	print 'a'
+	print dir(myPQ)
+
+	# Print contents of priority_queue
+
+	# Think about how to store for memory
+	
+
+
 
 
 # Note: dir(myPQ)
+'''
 ['__doc__',
  '__init__',
  '__module__',
@@ -41,4 +80,4 @@ myPQ = Queue.PriorityQueue
  'put_nowait',
  'qsize',
  'task_done']
-
+'''
