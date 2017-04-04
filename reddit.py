@@ -14,8 +14,6 @@ import re
 # Define Variables:
 headers  = {'user-agent': 'reddit-{}'.format(os.environ['USER'])}
 user = "madviet"
-web_address = "https://www.reddit.com/u/"+user+"/.json"
-
 
 # Define Functions:
 def usage(status):
@@ -38,26 +36,31 @@ while len(args) and args[0].startswith('-') and len(args[0]) > 1:
 	else:
 		usage(1)
 
+web_address = "https://www.reddit.com/u/"+user+"/.json"
 url = requests.get(web_address,headers=headers).json()
-print url
 
-'''COUNT = 1
 i = 0
-while COUNT <= LIMIT:
-	title = url["data"]["children"][i]["data"]["title"]
-	author = url["data"]["children"][i]["data"]["author"]
-	link = url["data"]["children"][i]["data"]["url"]
+tryval = 1;
+while tryval:
 	try:
-		string = url["data"]["children"][i]["data"][FIELD]
+		title = url["data"]["children"][i]["data"]["link_title"]
+		link_author = url["data"]["children"][i]["data"]["link_author"]
+		author = url["data"]["children"][i]["data"]["author"]
+		#body = url["data"]["children"][i]["data"]["body"]
+		#subreddit = url["data"]["children"][i]["data"]["subreddit"]
+		if author == link_author:
+			print "This is a post"
+			print title	
+		'''
+		print "Title: "+title
+		print "Link Author: "+link_author
+		print "Author: "+author
+		print "Body: "+body
+		print "Subreddit: "+subreddit
+		'''
 	except KeyError:
-		print "Invalid field: {}".format(FIELD)
-		sys.exit(1)
-	possible = re.findall(REGEX, string)
-	if possible:
-		print COUNT, ".",
-		print "\tTitle: \t", title
-		print "\tAuthor: ", author
-		print "\tLink: \t", link
-		COUNT = COUNT + 1
+		#print "error"
+		tryval = 0
+		#sys.exit(1)
 	i = i + 1
-'''
+
