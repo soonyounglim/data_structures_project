@@ -13,7 +13,8 @@ import re
 
 # Define Variables:
 headers  = {'user-agent': 'reddit-{}'.format(os.environ['USER'])}
-user = "madviet"
+user = 'madviet'
+page_count = '25'
 
 # Define Functions:
 def usage(status):
@@ -36,10 +37,19 @@ while len(args) and args[0].startswith('-') and len(args[0]) > 1:
 	else:
 		usage(1)
 
-web_address = "https://www.reddit.com/u/"+user+"/.json"
+# Get Posts:
+web_address = 'https://www.reddit.com/u/'+user+'/comments/.json'
 url = requests.get(web_address,headers=headers).json()
+comment = url["data"]["children"][0]["data"]["body"] # Saves the pointer to the next page.
+print comment
 
-i = 0
+'''while (next_page):
+	print next_page
+	web_address = 'https://www.reddit.com/u/'+user+'/submitted/?count='+page_count+'&after='+next_page
+	url = requests.get(web_address,headers=headers).json()
+	next_page = url["data"]["after"]'''
+
+'''i = 0
 tryval = 1;
 while tryval:
 	try:
@@ -51,16 +61,16 @@ while tryval:
 		if author == link_author:
 			print "This is a post"
 			print title	
-		'''
+		
 		print "Title: "+title
 		print "Link Author: "+link_author
 		print "Author: "+author
 		print "Body: "+body
 		print "Subreddit: "+subreddit
-		'''
+		
 	except KeyError:
 		#print "error"
 		tryval = 0
 		#sys.exit(1)
-	i = i + 1
+	i = i + 1'''
 
