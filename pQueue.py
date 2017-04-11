@@ -15,49 +15,72 @@
 ###
 
 
-
 # Future # # # # # # # # # # # # # # # # # # #
 # Handle Separate Queues for Comments and Posts
 # 
 
 
 # Imported Libraries
-import io
+#import io
 import os
+import requests
 import sys
-from Queue import PriorityQueue
+import heapq
 
-# Global Variables
+# Define Variables:
 STREAM 		= ''
-myPQ 		= PriorityQueue
+MYHEAP 		= heapq
+SCOREARR 	= []
 
-# Functions
-def usage(exit_code=0):
-	print '''Usage: {} [-s stream]
-	-s stream   Input stream'''.format(os.path.basename(sys.argv[0]))
-	sys.exit(exit_code)
+HEADERS  	= {'user-agent': 'reddit-{}'.format(os.environ['USER'])}
+USER 		= 'madviet'
 
+# Define Functions:
+def usage(status):
+	print '''Usage: {} -u USER
+	-u USER		The reddit user you wish to look up'''.format(
+		os.path.basename(sys.argv[0])
+	)
+	sys.exit(status)
+
+# Function that gets the userscore
+def get_score(comment_number=0):
+	return url["data"]["children"][comment_number]["data"]["score"]
+
+# Main Execution:
 if __name__ == '__main__':
-	# Parse command line arguments
 	args = sys.argv[1:]
 	while len(args) and args[0].startswith('-') and len(args[0]) > 1:
 		arg = args.pop(0)
 		if arg == '-h':
 			usage(0)
-		elif arg == '-p':
-			PREFIX = args.pop(0)			# Get the prefix
-		elif arg == '-s':
-			HASHES = args.pop(0)			# Get the path of the hashs file
+		elif arg == '-u':
+			USER = args.pop(0)
 		else:
 			usage(1)
 
-	print 'a'
-	print dir(myPQ)
+	# Initialize variables for user data.
+	web_address = 'https://www.reddit.com/u/'+USER+'/comments/.json'
+	url = requests.get(web_address,headers=HEADERS).json()
 
-	# Print contents of priority_queue
-
-	# Think about how to store for memory
+	for comment in range(0,10):			# Numbers from 0 to 9
+		try:
+			score = get_score(comment)
+			SCOREARR.append(score)
+			#MYPQ.put(score)
+		except:
+			break
 	
+	print url["data"]["children"][1]["data"]["link_id"]
+	
+	print SCOREARR
+
+	# Print highest and lowest comments from the heap.
+	'''
+	try
+	except(IndexError):
+	'''
+
 
 
 
