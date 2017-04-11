@@ -23,7 +23,6 @@ def usage(status):
 	)
 	sys.exit(status)
 
-
 # Main Execution:
 args = sys.argv[1:]
 while len(args) and args[0].startswith('-') and len(args[0]) > 1:
@@ -36,31 +35,42 @@ while len(args) and args[0].startswith('-') and len(args[0]) > 1:
 	else:
 		usage(1)
 
-web_address = "https://www.reddit.com/u/"+user+"/.json"
-url = requests.get(web_address,headers=headers).json()
+comments_web_address = "https://www.reddit.com/u/"+user+"/comments/.json"
+comments_url = requests.get(comments_web_address,headers=headers).json()
+interests = {}
+family = {}
 
-i = 0
-tryval = 1;
-while tryval:
-	try:
-		title = url["data"]["children"][i]["data"]["link_title"]
-		link_author = url["data"]["children"][i]["data"]["link_author"]
-		author = url["data"]["children"][i]["data"]["author"]
-		#body = url["data"]["children"][i]["data"]["body"]
-		#subreddit = url["data"]["children"][i]["data"]["subreddit"]
-		if author == link_author:
-			print "This is a post"
-			print title	
-		'''
-		print "Title: "+title
-		print "Link Author: "+link_author
-		print "Author: "+author
-		print "Body: "+body
-		print "Subreddit: "+subreddit
-		'''
-	except KeyError:
-		#print "error"
-		tryval = 0
-		#sys.exit(1)
-	i = i + 1
+for i in range(0, len(comments_url["data"]["children"])):
+	link_title = comments_url["data"]["children"][i]["data"]["link_title"]
+	link_author = comments_url["data"]["children"][i]["data"]["link_author"]
+	author = comments_url["data"]["children"][i]["data"]["author"]
+	body = comments_url["data"]["children"][i]["data"]["body"]
+	subreddit = comments_url["data"]["children"][i]["data"]["subreddit"]
+	f = open("family.txt")
+	for word in f.readlines():
+		word = word.strip();
+		if (re.search(word, body)):
+			if word in family:
+                            family[word] = family[word] + 1
+                        else:
+                            family[word] = 1
 
+	if subreddit in interests:
+		interests[subreddit] = interests[subreddit] + 1
+	else:
+		interests[subreddit] = 1
+	'''
+	print "Link Title: "+link_title
+	print "Link Author: "+link_author
+	print "Author: "+author
+	print "Body: "+body
+	print "Subreddit: "+subreddit
+	print "----------------------------------"
+	'''
+print user+"'s interests are: "
+for key, value in interests.items():
+	print key, value
+
+print user+" has :"
+for key, value in family.items():
+        print key, value
