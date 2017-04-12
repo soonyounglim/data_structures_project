@@ -33,16 +33,18 @@ myNode = collections.namedtuple('myNode', ['score', 'comment'])
 # Define Variables:
 STREAM 			= ''
 COMMENTHEAP 	= []
-NUMCOMMENTS 	= 15
+NUMCOMMENTS 	= 10
 NUMTOPBOTCOMM 	= 3
+USER 			= 'madviet'
 
 HEADERS  		= {'user-agent': 'reddit-{}'.format(os.environ['USER'])}
-USER 			= 'madviet'
 
 # Define Functions:
 def usage(status):
 	print '''Usage: {} -u USER
-	-u USER		The reddit user you wish to look up'''.format(
+	-u USER	         The reddit user you wish to look up
+	-tb NUM(TOP/BOT)  The number of top/bottom comment scores
+	-n NUMCOMMENTS   The number of user comments to analyze'''.format(
 		os.path.basename(sys.argv[0])
 	)
 	sys.exit(status)
@@ -64,6 +66,10 @@ if __name__ == '__main__':
 			usage(0)
 		elif arg == '-u':
 			USER = args.pop(0)
+		elif arg == '-n':
+			NUMCOMMENTS = int(args.pop(0))
+		elif arg == '-tb':
+			NUMTOPBOTCOMM = int(args.pop(0))
 		else:
 			usage(1)
 
