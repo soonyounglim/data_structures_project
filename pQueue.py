@@ -21,19 +21,23 @@
 
 
 # Imported Libraries
-#import io
+import collections
+from heapq import heappush, heappop, nlargest, nsmallest
 import os
 import requests
 import sys
-import heapq
+
+# Object
+myNode = collections.namedtuple('myNode', ['score', 'comment'])
 
 # Define Variables:
-STREAM 		= ''
-MYHEAP 		= heapq
-SCOREARR 	= []
+STREAM 			= ''
+COMMENTHEAP 	= []
+NUMCOMMENTS 	= 15
+NUMTOPBOTCOMM 	= 3
 
-HEADERS  	= {'user-agent': 'reddit-{}'.format(os.environ['USER'])}
-USER 		= 'madviet'
+HEADERS  		= {'user-agent': 'reddit-{}'.format(os.environ['USER'])}
+USER 			= 'madviet'
 
 # Define Functions:
 def usage(status):
@@ -46,6 +50,10 @@ def usage(status):
 # Function that gets the userscore
 def get_score(comment_number=0):
 	return url["data"]["children"][comment_number]["data"]["score"]
+
+# Function that gets the comment
+def get_comment(comment_number=0):
+	return url["data"]["children"][comment_number]["data"]["body"]
 
 # Main Execution:
 if __name__ == '__main__':
@@ -63,44 +71,28 @@ if __name__ == '__main__':
 	web_address = 'https://www.reddit.com/u/'+USER+'/comments/.json'
 	url = requests.get(web_address,headers=HEADERS).json()
 
-	for comment in range(0,10):			# Numbers from 0 to 9
-		try:
-			score = get_score(comment)
-			SCOREARR.append(score)
-			#MYPQ.put(score)
-		except:
-			break
+	for comment in range(0, NUMCOMMENTS):			# Numbers from 0 to 9
+		score = get_score(comment)
+		comment = get_comment(comment)
+		node = myNode(score = score, comment = comment)
+		heappush(COMMENTHEAP, node)
 	
-	print url["data"]["children"][1]["data"]["link_id"]
-	
-	print SCOREARR
+	a = nlargest(NUMTOPBOTCOMM, enumerate(COMMENTHEAP), key=lambda x: x[1])
+	print a
 
-	# Print highest and lowest comments from the heap.
-	'''
-	try
-	except(IndexError):
-	'''
+	print "a"
+
+	b = nsmallest(NUMTOPBOTCOMM, enumerate(COMMENTHEAP), key=lambda x: x[1])
+	print b
+
+	# for comment in COMMENTHEAP:
+	# 	print COMMENTHEAP.second
+
+	# Print lowest and highest comments from the heap.
+	# for i in range(0, NUMTOPBOTCOMM):
+	# 	print COMMENTHEAP.pop()
+
+	#for i in reversed(COMMENTHEAP)
 
 
 
-
-
-# Note: dir(myPQ)
-'''
-['__doc__',
- '__init__',
- '__module__',
- '_get',
- '_init',
- '_put',
- '_qsize',
- 'empty',
- 'full',
- 'get',
- 'get_nowait',
- 'join',
- 'put',
- 'put_nowait',
- 'qsize',
- 'task_done']
-'''
