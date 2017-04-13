@@ -12,9 +12,10 @@ import re
 
 
 # Define Variables:
-HEADERS  = {'user-agent': 'reddit-{}'.format(os.environ['USER'])}
-USER = 'spez'
+USER = 'madviet'
 POSTS_PER_PAGE = 25
+HEADERS  = {'user-agent': 'reddit-{}'.format(os.environ['USER'])}
+
 
 # Define Functions:
 def usage(status):
@@ -24,8 +25,11 @@ def usage(status):
 	)
 	sys.exit(status)
 
+def get_data(URL_JSON, INDEX, DATA):
+	return URL_JSON['data']['children'][INDEX]['data'][DATA]
+
 def get_initial_page(TYPE):
-	web_address = 'https://www.reddit.com/u/{}/submitted/.json'.format(USER)
+	web_address = 'https://www.reddit.com/u/{}/{}/.json'.format(USER, TYPE)
 	url = requests.get(web_address,headers=HEADERS).json()
 	print web_address
 	return url["data"]["after"] # Saves the pointer to the next page.
@@ -48,25 +52,31 @@ while len(args) and args[0].startswith('-') and len(args[0]) > 1:
 		usage(1)
 
 
-# Get Posts:
-next_page = get_initial_page('submitted')
+# Get Comments:
+'''
+post_or_comment = 'comments'
+
+next_page = get_initial_page(post_or_comment)
 count = POSTS_PER_PAGE
 while (next_page):
-	next_page = get_next_page('submitted', count, next_page)
-	count = count + POSTS_PER_PAGE
+	next_page = get_next_page(post_or_comment, count, next_page)
+	count = count + POSTS_PER_PAGE'''
 
   
-comments_web_address = "https://www.reddit.com/u/"+user+"/comments/.json"
-comments_url = requests.get(comments_web_address,headers=headers).json()
+web_address = "https://www.reddit.com/u/"+USER+"/comments/.json"
+url_json = requests.get(web_address,headers=HEADERS).json()
 interests = {}
 family = {}
 
-for i in range(0, len(comments_url["data"]["children"])):
-	link_title = comments_url["data"]["children"][i]["data"]["link_title"]
-	link_author = comments_url["data"]["children"][i]["data"]["link_author"]
-	author = comments_url["data"]["children"][i]["data"]["author"]
-	body = comments_url["data"]["children"][i]["data"]["body"]
-	subreddit = comments_url["data"]["children"][i]["data"]["subreddit"]
+for i in range(0, len(url_json["data"]["children"])):
+	# Get Metadata.
+	link_title = get_data(url_json, i, 'link_title')
+	link_author = get_data(url_json, i, 'link_author')
+	author = get_data(url_json, i, 'author')
+	body = get_data(url_json, i, 'body')
+	subreddit = get_data(url_json, i, 'subreddit')
+
+	# Grep For Comments Based On Family.
 	f = open("family.txt")
 	for word in f.readlines():
 		word = word.strip();
@@ -88,10 +98,10 @@ for i in range(0, len(comments_url["data"]["children"])):
 	print "Subreddit: "+subreddit
 	print "----------------------------------"
 	'''
-print user+"'s interests are: "
+print USER+'\'s interests are:'
 for key, value in interests.items():
-	print key, value
+	print '{}\t{}'.format(key, value)
 
-print user+" has :"
+print USER+' has :'
 for key, value in family.items():
-        print key, value
+        print '{}\t{}'.format(key, value)
