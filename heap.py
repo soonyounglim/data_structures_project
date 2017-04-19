@@ -28,13 +28,16 @@ import requests
 import sys
 
 # Object
-myNode = collections.namedtuple('myNode', ['score', 'comment'])
+myNode = collections.namedtuple('myNode', ['score', 'body'])
 
 # Define Variables:
 STREAM 			= ''
 COMMENTHEAP 	= []
 NUMCOMMENTS 	= 10
 NUMTOPBOTCOMM 	= 3
+POSTHEAP 		= []
+NUMPOSTS 		= 10
+NUMTOPBOTPOST	= 3
 USER 			= 'madviet'
 
 HEADERS  		= {'user-agent': 'reddit-{}'.format(os.environ['USER'])}
@@ -42,20 +45,26 @@ HEADERS  		= {'user-agent': 'reddit-{}'.format(os.environ['USER'])}
 # Define Functions:
 def usage(status):
 	print '''Usage: {} -u USER
-	-u USER	         The reddit user you wish to look up
+	-u USER	          The reddit user you wish to look up
 	-tb NUM(TOP/BOT)  The number of top/bottom comment scores
-	-n NUMCOMMENTS   The number of user comments to analyze'''.format(
+	-n NUMCOMMENTS    The number of user comments to analyze'''.format(
 		os.path.basename(sys.argv[0])
 	)
 	sys.exit(status)
 
 # Function that gets the userscore
-def get_score(comment_number=0):
+def get_comment_score(comment_number=0):
 	return url["data"]["children"][comment_number]["data"]["score"]
 
 # Function that gets the comment
 def get_comment(comment_number=0):
 	return url["data"]["children"][comment_number]["data"]["body"]
+
+def get_post_score(post_number=0):
+	return url["data"]["children"][post_number]["data"]["score"]
+
+def get_post(post_number=0):
+	return url["data"]["children"][post_number]["data"]["title"]
 
 # Main Execution:
 if __name__ == '__main__':
@@ -73,15 +82,15 @@ if __name__ == '__main__':
 		else:
 			usage(1)
 
-	# Initialize variables for user data.
+	# Initialize variables for user data for comments.
 	web_address = 'https://www.reddit.com/u/'+USER+'/comments/.json'
 	url = requests.get(web_address,headers=HEADERS).json()
 
-	for comment in range(0, NUMCOMMENTS):			# Numbers from 0 to 9
+	for comment in range(0, NUMCOMMENTS):
 		try:
-			score = get_score(comment)
+			score = get_comment_score(comment)
 			comment = get_comment(comment)
-			node = myNode(score = score, comment = comment)
+			node = myNode(score = score, body = comment)
 			heappush(COMMENTHEAP, node)
 		except IndexError,e:
 			print "Error:", str(e)
@@ -95,6 +104,33 @@ if __name__ == '__main__':
 
 	b = nsmallest(NUMTOPBOTCOMM, enumerate(COMMENTHEAP), key=lambda x: x[1])
 	print b
+
+	print "a"
+	print "a"
+
+	# Update variables for user data for posts.
+	web_address = 'https://www.reddit.com/u/'+USER+'/submitted/.json'
+	url = requests.get(web_address,headers=HEADERS).json()
+
+	for post in range(0, NUMPOSTS):
+		try:
+			score = get_post_score(post)
+			post = get_post(post)
+			node = myNode(score = score, body = post)
+			heappush(POSTHEAP, node)
+		except IndexError,e:
+			print "Error:", str(e)
+			print "The user", USER, "does not have", NUMPOSTS, "posts."
+			sys.exit(1)
+
+	a = nlargest(NUMTOPBOTPOST, enumerate(POSTHEAP), key=lambda x: x[1])
+	print a
+
+	print "a"
+
+	b = nsmallest(NUMTOPBOTPOST, enumerate(POSTHEAP), key=lambda x: x[1])
+	print b
+
 
 	# for comment in COMMENTHEAP:
 	# 	print COMMENTHEAP.second
