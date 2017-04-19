@@ -76,6 +76,12 @@ for i in range(0, len(url_json["data"]["children"])):
 	body = get_data(url_json, i, 'body')
 	subreddit = get_data(url_json, i, 'subreddit')
 
+	# age
+        regex = r"("I am "+\d+" years old")"
+        matches = re.findall(regex, body)
+        for match in matches:
+                print match
+
 	# Grep For Comments Based On Family.
 	f = open("family.txt")
 	for word in f.readlines():
@@ -86,10 +92,13 @@ for i in range(0, len(url_json["data"]["children"])):
                         else:
                             family[word] = 1
 
+	# user's interests
 	if subreddit in interests:
 		interests[subreddit] = interests[subreddit] + 1
 	else:
 		interests[subreddit] = 1
+
+	# print
 	'''
 	print "Link Title: "+link_title
 	print "Link Author: "+link_author
