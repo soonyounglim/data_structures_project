@@ -39,6 +39,8 @@ comments_web_address = "https://www.reddit.com/u/"+user+"/comments/.json"
 comments_url = requests.get(comments_web_address,headers=headers).json()
 interests = {}
 family = {}
+age = {}
+
 
 for i in range(0, len(comments_url["data"]["children"])):
 	link_title = comments_url["data"]["children"][i]["data"]["link_title"]
@@ -46,6 +48,7 @@ for i in range(0, len(comments_url["data"]["children"])):
 	author = comments_url["data"]["children"][i]["data"]["author"]
 	body = comments_url["data"]["children"][i]["data"]["body"]
 	subreddit = comments_url["data"]["children"][i]["data"]["subreddit"]
+	# family
 	f = open("family.txt")
 	for word in f.readlines():
 		word = word.strip();
@@ -54,7 +57,15 @@ for i in range(0, len(comments_url["data"]["children"])):
                             family[word] = family[word] + 1
                         else:
                             family[word] = 1
+	# age
+	regex = r"("I am "+\d+" years old")"
+	matches = re.findall(regex, body)
+	for match in matches:
+		print match
+		
 
+
+	# interests
 	if subreddit in interests:
 		interests[subreddit] = interests[subreddit] + 1
 	else:
