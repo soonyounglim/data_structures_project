@@ -12,7 +12,7 @@ import re
 
 
 # Define Variables:
-USER = 'madviet'
+USER = '3yearold'
 POSTS_PER_PAGE = 25
 HEADERS  = {'user-agent': 'reddit-{}'.format(os.environ['USER'])}
 
@@ -77,8 +77,9 @@ for i in range(0, len(url_json["data"]["children"])):
 	subreddit = get_data(url_json, i, 'subreddit')
 
 	# age
-        regex = r"("I am "+\d+" years old")"
-        matches = re.findall(regex, body)
+        #regex = r"I'm +\d+ years old"
+	#matches = re.findall(regex, body)
+	matches = re.findall(r"son", body)
         for match in matches:
                 print match
 
@@ -107,6 +108,7 @@ for i in range(0, len(url_json["data"]["children"])):
 	print "Subreddit: "+subreddit
 	print "----------------------------------"
 	'''
+'''
 print USER+'\'s interests are:'
 for key, value in interests.items():
 	print '{}\t{}'.format(key, value)
@@ -114,3 +116,4 @@ for key, value in interests.items():
 print USER+' has :'
 for key, value in family.items():
         print '{}\t{}'.format(key, value)
+'''
