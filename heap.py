@@ -1,7 +1,7 @@
 #!/usr/bin/env python2.7
 #
 ###
-#   Title: pQueue.py
+#   Title: heap.py
 #   Author: Anthony Luc
 #   Date: April 2, 2017
 #   Course: Data Structures 2017
