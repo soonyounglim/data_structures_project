@@ -78,10 +78,15 @@ if __name__ == '__main__':
 	url = requests.get(web_address,headers=HEADERS).json()
 
 	for comment in range(0, NUMCOMMENTS):			# Numbers from 0 to 9
-		score = get_score(comment)
-		comment = get_comment(comment)
-		node = myNode(score = score, comment = comment)
-		heappush(COMMENTHEAP, node)
+		try:
+			score = get_score(comment)
+			comment = get_comment(comment)
+			node = myNode(score = score, comment = comment)
+			heappush(COMMENTHEAP, node)
+		except IndexError,e:
+			print "Error:", str(e)
+			print "The user", USER, "does not have", NUMCOMMENTS, "comments."
+			sys.exit(1)
 	
 	a = nlargest(NUMTOPBOTCOMM, enumerate(COMMENTHEAP), key=lambda x: x[1])
 	print a
