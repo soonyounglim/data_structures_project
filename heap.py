@@ -121,14 +121,3 @@ if __name__ == '__main__':
 	b = nsmallest(NUMTOPBOTPOST, enumerate(POSTHEAP), key=lambda x: x[1])
 	print_heap(b)
 
-	# for comment in COMMENTHEAP:
-	# 	print COMMENTHEAP.second
-
-	# Print lowest and highest comments from the heap.
-	# for i in range(0, NUMTOPBOTCOMM):
-	# 	print COMMENTHEAP.pop()
-
-	#for i in reversed(COMMENTHEAP)
-
-
-
