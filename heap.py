@@ -14,12 +14,6 @@
 #
 ###
 
-
-# Future # # # # # # # # # # # # # # # # # # #
-# Handle Separate Queues for Comments and Posts
-# 
-
-
 # Imported Libraries
 import collections
 from heapq import heappush, heappop, nlargest, nsmallest
@@ -28,7 +22,7 @@ import requests
 import sys
 
 # Object
-myNode = collections.namedtuple('myNode', ['score', 'body'])
+myPair = collections.namedtuple('myPair', ['score', 'body'])
 
 # Define Variables:
 STREAM 			= ''
@@ -53,18 +47,21 @@ def usage(status):
 	sys.exit(status)
 
 # Function that gets the userscore
-def get_comment_score(comment_number=0):
-	return url["data"]["children"][comment_number]["data"]["score"]
+def get_score(obj_number=0):
+	return url["data"]["children"][obj_number]["data"]["score"]
 
-# Function that gets the comment
+# Function that gets the comment body
 def get_comment(comment_number=0):
 	return url["data"]["children"][comment_number]["data"]["body"]
 
-def get_post_score(post_number=0):
-	return url["data"]["children"][post_number]["data"]["score"]
-
+# Function that gets the post title
 def get_post(post_number=0):
 	return url["data"]["children"][post_number]["data"]["title"]
+
+# Function that prints the heap nicely
+def print_heap(heap):
+	for k,v in enumerate(heap):
+		print "#", k, "\tScore:", v[1][0], "\tBody:", v[1][1], "\n"
 
 # Main Execution:
 if __name__ == '__main__':
@@ -88,9 +85,9 @@ if __name__ == '__main__':
 
 	for comment in range(0, NUMCOMMENTS):
 		try:
-			score = get_comment_score(comment)
+			score = get_score(comment)
 			comment = get_comment(comment)
-			node = myNode(score = score, body = comment)
+			node = myPair(score = score, body = comment)
 			heappush(COMMENTHEAP, node)
 		except IndexError,e:
 			print "Error:", str(e)
@@ -98,15 +95,10 @@ if __name__ == '__main__':
 			sys.exit(1)
 	
 	a = nlargest(NUMTOPBOTCOMM, enumerate(COMMENTHEAP), key=lambda x: x[1])
-	print a
-
-	print "a"
+	print_heap(a)
 
 	b = nsmallest(NUMTOPBOTCOMM, enumerate(COMMENTHEAP), key=lambda x: x[1])
-	print b
-
-	print "a"
-	print "a"
+	print_heap(b)
 
 	# Update variables for user data for posts.
 	web_address = 'https://www.reddit.com/u/'+USER+'/submitted/.json'
@@ -114,9 +106,9 @@ if __name__ == '__main__':
 
 	for post in range(0, NUMPOSTS):
 		try:
-			score = get_post_score(post)
+			score = get_score(post)
 			post = get_post(post)
-			node = myNode(score = score, body = post)
+			node = myPair(score = score, body = post)
 			heappush(POSTHEAP, node)
 		except IndexError,e:
 			print "Error:", str(e)
@@ -124,13 +116,10 @@ if __name__ == '__main__':
 			sys.exit(1)
 
 	a = nlargest(NUMTOPBOTPOST, enumerate(POSTHEAP), key=lambda x: x[1])
-	print a
-
-	print "a"
+	print_heap(a)
 
 	b = nsmallest(NUMTOPBOTPOST, enumerate(POSTHEAP), key=lambda x: x[1])
-	print b
-
+	print_heap(b)
 
 	# for comment in COMMENTHEAP:
 	# 	print COMMENTHEAP.second
