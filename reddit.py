@@ -77,8 +77,6 @@ for i in range(0, len(url_json["data"]["children"])):
 	subreddit = get_data(url_json, i, 'subreddit')
 
 	# age
-        #regex = r"I'm +\d+ years old"
-	#matches = re.findall(regex, body)
 	matches = re.findall(r"son", body)
         for match in matches:
                 print match
