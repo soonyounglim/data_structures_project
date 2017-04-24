@@ -54,7 +54,7 @@ def parse_json(URL_JSON):
 			body = get_data(URL_JSON, i, 'body')
 			
 			score = get_data(URL_JSON, i, 'score')
-			store_heap(score, body, 'comment')
+			store_heap(score, body, TYPE)
 			
 			find_family(body)									# Grep For Comments Based On Family.
 
@@ -67,7 +67,7 @@ def parse_json(URL_JSON):
 				find_family(body)
 
 			score = get_data(URL_JSON, i, 'score')
-			store_heap(score, post_title, 'post')
+			store_heap(score, post_title, TYPE)
 		
 		subreddit = get_data(URL_JSON, i, 'subreddit')
 
@@ -86,7 +86,6 @@ def find_family(BODY):
 				family[word] = family[word] + 1
 			else:
 				family[word] = 1
-
 
 def get_data(URL_JSON, INDEX, DATA):
 	return URL_JSON['data']['children'][INDEX]['data'][DATA]
@@ -116,9 +115,9 @@ def print_family():
 # Heap functions
 def store_heap(SCORE, BODY, TYPE):
 	node = myPair(score = SCORE, body = BODY)
-	if TYPE == 'comment':
+	if TYPE == 'comments':
 		heappush(COMMENTHEAP, node)
-	else:
+	else: # submitted
 		heappush(POSTHEAP, node)
 
 def print_top_bot(NUMTOPBOT=NUMTOPBOT):
