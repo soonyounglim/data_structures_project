@@ -15,6 +15,11 @@ import re
 USER = 'madviet'
 POSTS_PER_PAGE = 25
 HEADERS  = {'user-agent': 'reddit-{}'.format(os.environ['USER'])}
+TYPE = ''
+
+# Define Dictionaries:
+interests = {}
+family = {}
 
 
 # Define Functions:
@@ -25,20 +30,75 @@ def usage(status):
 	)
 	sys.exit(status)
 
+def parse_user_history(TYPE):
+	next_page = get_initial_page(TYPE)
+	count = POSTS_PER_PAGE
+	while (next_page):
+		next_page = get_next_page(TYPE, count, next_page)
+		count = count + POSTS_PER_PAGE
+
+def parse_json(URL_JSON):	
+	for i in range(0, len(URL_JSON["data"]["children"])):
+		# Get metadata for comments.
+		if (TYPE == 'comments'):
+			comment_title = get_data(URL_JSON, i, 'link_title')
+			comment_author = get_data(URL_JSON, i, 'link_author')
+			body = get_data(URL_JSON, i, 'body')
+			
+			find_family(body)									# Grep For Comments Based On Family.
+
+		# Get metadata for post/submitted.
+		else:
+			post_title = get_data(URL_JSON, i, 'title')
+			self_post = get_data(URL_JSON, i, 'is_self')
+
+			find_family(post_title)
+		
+		subreddit = get_data(URL_JSON, i, 'subreddit')
+
+
+		# user's interests
+		if subreddit in interests:
+			interests[subreddit] = interests[subreddit] + 1
+		else:
+			interests[subreddit] = 1
+
+def find_family(BODY):
+	f = open("family.txt")
+	for word in f.readlines():
+		word = word.strip();
+		if (re.search(word, BODY)):
+			if word in family:
+                            family[word] = family[word] + 1
+                        else:
+                            family[word] = 1
+
+
 def get_data(URL_JSON, INDEX, DATA):
 	return URL_JSON['data']['children'][INDEX]['data'][DATA]
 
 def get_initial_page(TYPE):
 	web_address = 'https://www.reddit.com/u/{}/{}/.json'.format(USER, TYPE)
 	url = requests.get(web_address,headers=HEADERS).json()
-	print web_address
+	parse_json(url);
 	return url["data"]["after"] # Saves the pointer to the next page.
 
 def get_next_page(TYPE, COUNT, NEXT_PAGE):
 	web_address = 'https://www.reddit.com/u/{}/{}/.json?count={}&after={}'.format(USER, TYPE, COUNT, NEXT_PAGE)
 	url = requests.get(web_address,headers=HEADERS).json()
-	print web_address
+	parse_json(url);
 	return url['data']['after']
+
+def print_interests():
+	print USER+'\'s interests are:'
+	for key, value in interests.items():
+		print '{}\t{}'.format(key, value)
+
+def print_family():
+	print USER+' has :'
+	for key, value in family.items():
+	        print '{}\t{}'.format(key, value)
+
 
 # Main Execution:
 args = sys.argv[1:]
@@ -52,65 +112,13 @@ while len(args) and args[0].startswith('-') and len(args[0]) > 1:
 		usage(1)
 
 
-# Get Comments:
-'''
-post_or_comment = 'comments'
+# Get Comments / Posts:
+TYPE = 'comments'
+parse_user_history(TYPE)
+TYPE = 'submitted'
+parse_user_history(TYPE)
 
-next_page = get_initial_page(post_or_comment)
-count = POSTS_PER_PAGE
-while (next_page):
-	next_page = get_next_page(post_or_comment, count, next_page)
-	count = count + POSTS_PER_PAGE'''
 
-  
-web_address = "https://www.reddit.com/u/"+USER+"/comments/.json"
-url_json = requests.get(web_address,headers=HEADERS).json()
-interests = {}
-family = {}
-
-for i in range(0, len(url_json["data"]["children"])):
-	# Get Metadata.
-	link_title = get_data(url_json, i, 'link_title')
-	link_author = get_data(url_json, i, 'link_author')
-	author = get_data(url_json, i, 'author')
-	body = get_data(url_json, i, 'body')
-	subreddit = get_data(url_json, i, 'subreddit')
-
-	# age
-        regex = r"("I am "+\d+" years old")"
-        matches = re.findall(regex, body)
-        for match in matches:
-                print match
-
-	# Grep For Comments Based On Family.
-	f = open("family.txt")
-	for word in f.readlines():
-		word = word.strip();
-		if (re.search(word, body)):
-			if word in family:
-                            family[word] = family[word] + 1
-                        else:
-                            family[word] = 1
-
-	# user's interests
-	if subreddit in interests:
-		interests[subreddit] = interests[subreddit] + 1
-	else:
-		interests[subreddit] = 1
-
-	# print
-	'''
-	print "Link Title: "+link_title
-	print "Link Author: "+link_author
-	print "Author: "+author
-	print "Body: "+body
-	print "Subreddit: "+subreddit
-	print "----------------------------------"
-	'''
-print USER+'\'s interests are:'
-for key, value in interests.items():
-	print '{}\t{}'.format(key, value)
-
-print USER+' has :'
-for key, value in family.items():
-        print '{}\t{}'.format(key, value)
+# Print Overview:
+print_interests()
+print_family()
