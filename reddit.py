@@ -121,7 +121,7 @@ def store_heap(SCORE, BODY, TYPE):
 	else:
 		heappush(POSTHEAP, node)
 
-def print_top_bot(NUMTOPBOT):
+def print_top_bot(NUMTOPBOT=NUMTOPBOT):
 	print "Comments:"
 	a = nlargest(NUMTOPBOT, enumerate(COMMENTHEAP), key=lambda x: x[1])
 	print_heap(a)
@@ -158,6 +158,6 @@ if __name__ == '__main__':
 	parse_user_history(TYPE)
 
 	# Print Overview:
-	print_top_bot(NUMTOPBOT)
+	print_top_bot()
 	print_interests()
 	print_family()
