@@ -157,6 +157,6 @@ if __name__ == '__main__':
 	parse_user_history(TYPE)
 
 	# Print Overview:
-	print_top_bot()
+	print_top_bot(NUMTOPBOT)
 	print_interests()
 	print_family()
