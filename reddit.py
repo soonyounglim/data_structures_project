@@ -62,14 +62,14 @@ def parse_json(URL_JSON):
 		else:
 			post_title = get_data(URL_JSON, i, 'title')
 			self_post = get_data(URL_JSON, i, 'is_self')
+			if self_post:
+				body = get_data(URL_JSON, i, 'selftext')
+				find_family(body)
 
 			score = get_data(URL_JSON, i, 'score')
 			store_heap(score, post_title, 'post')
-
-			find_family(post_title)
 		
 		subreddit = get_data(URL_JSON, i, 'subreddit')
-
 
 		# user's interests
 		if subreddit in interests:
