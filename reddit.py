@@ -10,7 +10,6 @@ import sys
 import requests
 import re
 
-
 # Define Variables:
 USER = 'madviet'
 POSTS_PER_PAGE = 25
@@ -91,14 +90,25 @@ def get_next_page(TYPE, COUNT, NEXT_PAGE):
 
 def print_interests():
 	print USER+'\'s interests are:'
+	print '-------------------------------'
+	print '{}\t{}'.format("interest","# of occurences")
+	print '-------------------------------'
 	for key, value in interests.items():
-		print '{}\t{}'.format(key, value)
+		print key
+		for i in range(20-len(key)):
+			print ' ',
+		print value
+		print '-------------------------------'
 
 def print_family():
+	print '\n'
 	print USER+' has :'
+	print '-------------------------------'
+	print '{}\t{}'.format("family member", "# of occurences")
+	print '-------------------------------'
 	for key, value in family.items():
-	        print '{}\t{}'.format(key, value)
-
+	        print '{}\t\t\t{}'.format(key, value)
+		print '-------------------------------'
 
 # Main Execution:
 args = sys.argv[1:]
