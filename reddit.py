@@ -121,14 +121,16 @@ def store_heap(SCORE, BODY, TYPE):
 		heappush(POSTHEAP, node)
 
 def print_top_bot(NUMTOPBOT=NUMTOPBOT):
-	print "Comments:"
+	print "Top", NUMTOPBOT, "Comments:"
 	a = nlargest(NUMTOPBOT, enumerate(COMMENTHEAP), key=lambda x: x[1])
 	print_heap(a)
+	print "Bottom", NUMTOPBOT, "Comments:"
 	a = nsmallest(NUMTOPBOT, enumerate(COMMENTHEAP), key=lambda x: x[1])
 	print_heap(a)
-	print "Posts:"
+	print "Top", NUMTOPBOT, "Posts:"
 	a = nlargest(NUMTOPBOT, enumerate(POSTHEAP), key=lambda x: x[1])
 	print_heap(a)
+	print "Bottom", NUMTOPBOT, "Posts:"
 	a = nsmallest(NUMTOPBOT, enumerate(POSTHEAP), key=lambda x: x[1])
 	print_heap(a)
 
