@@ -94,10 +94,7 @@ def print_interests():
 	print '{}\t{}'.format("interest","# of occurences")
 	print '-------------------------------'
 	for key, value in interests.items():
-		print key
-		for i in range(20-len(key)):
-			print ' ',
-		print value
+		print '|{:>20}|{:>10}|'.format(key,value)
 		print '-------------------------------'
 
 def print_family():
