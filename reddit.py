@@ -90,22 +90,22 @@ def get_next_page(TYPE, COUNT, NEXT_PAGE):
 
 def print_interests():
 	print USER+'\'s interests are:'
-	print '-------------------------------'
-	print '{}\t{}'.format("interest","# of occurences")
-	print '-------------------------------'
+	print '--------------------------------------'
+	print '|{:>20}|{:>15}|'.format("interest","# of occurences")
+	print '--------------------------------------'
 	for key, value in interests.items():
-		print '|{:>20}|{:>10}|'.format(key,value)
-		print '-------------------------------'
+		print '|{:>20}|{:>15}|'.format(key,value)
+		print '--------------------------------------'
 
 def print_family():
 	print '\n'
 	print USER+' has :'
-	print '-------------------------------'
-	print '{}\t{}'.format("family member", "# of occurences")
-	print '-------------------------------'
+	print '--------------------------------------'
+	print '|{:>20}|{:>15}|'.format("family member", "# of occurences")
+	print '--------------------------------------'
 	for key, value in family.items():
-	        print '{}\t\t\t{}'.format(key, value)
-		print '-------------------------------'
+	        print '|{:>20}|{:>15}|'.format(key, value)
+		print '--------------------------------------'
 
 # Main Execution:
 args = sys.argv[1:]
