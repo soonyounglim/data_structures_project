@@ -103,15 +103,14 @@ def get_next_page(TYPE, COUNT, NEXT_PAGE):
 	parse_json(url);
 	return url['data']['after']
 
-# Heap functions
+# Heap functions # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 def store_heap(SCORE, BODY, TYPE):
 	node = myPair(score = SCORE, body = BODY)
 	if TYPE == 'comments':
 		heappush(COMMENTHEAP, node)
 	else: # submitted
 		heappush(POSTHEAP, node)
-
-
+    
 # Print Functions
 def print_top_bot(NUMTOPBOT=NUMTOPBOT):
 	print "Top", NUMTOPBOT, "Comments:"
@@ -130,6 +129,8 @@ def print_top_bot(NUMTOPBOT=NUMTOPBOT):
 def print_heap(heap):   # Function that prints the heap
 	for k,v in enumerate(heap):
 		print "#", k+1, "\tScore:", v[1][0], "\tBody:", v[1][1], "\n"
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 def print_interests():
 	print USER+'\'s interests are:'
@@ -165,7 +166,6 @@ if __name__ == '__main__':
 		else:
 			usage(1)
 
-	
 	print("Parsing through comments and posts...")
 
 	# Get Comments / Posts:
