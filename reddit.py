@@ -104,52 +104,56 @@ def get_next_page(TYPE, COUNT, NEXT_PAGE):
 	parse_json(url);
 	return url['data']['after']
 
-# Heap functions
+# Heap functions # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 def store_heap(SCORE, BODY, TYPE):
 	node = myPair(score = SCORE, body = BODY)
 	if TYPE == 'comments':
 		heappush(COMMENTHEAP, node)
 	else: # submitted
 		heappush(POSTHEAP, node)
-
-
+    
 # Print Functions
 def print_top_bot(NUMTOPBOT=NUMTOPBOT):
 	print "Top", NUMTOPBOT, "Comments:"
 	a = nlargest(NUMTOPBOT, enumerate(COMMENTHEAP), key=lambda x: x[1])
-	print_heap(a)
+	print_heap(a, 'comments')
 	print "Bottom", NUMTOPBOT, "Comments:"
 	a = nsmallest(NUMTOPBOT, enumerate(COMMENTHEAP), key=lambda x: x[1])
-	print_heap(a)
+	print_heap(a, 'comments')
 	print "Top", NUMTOPBOT, "Posts:"
 	a = nlargest(NUMTOPBOT, enumerate(POSTHEAP), key=lambda x: x[1])
-	print_heap(a)
+	print_heap(a, 'submitted')
 	print "Bottom", NUMTOPBOT, "Posts:"
 	a = nsmallest(NUMTOPBOT, enumerate(POSTHEAP), key=lambda x: x[1])
-	print_heap(a)
+	print_heap(a, 'submitted')
 
-def print_heap(heap):   # Function that prints the heap
+def print_heap(heap, TYPE=TYPE):   # Function that prints the heap
 	for k,v in enumerate(heap):
-		print "#", k+1, "\tScore:", v[1][0], "\tBody:", v[1][1], "\n"
+		if TYPE == 'comments':
+			print "#", k+1, "\tScore:", v[1][0], "\tComment:", v[1][1], "\n"
+		else:
+			print "#", k+1, "\tScore:", v[1][0], "\tTitle:", v[1][1], "\n"
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 def print_interests():
 	print USER+'\'s interests are:'
-	print '--------------------------------------'
-	print '|{:>20}|{:>15}|'.format("interest","# of occurences")
-	print '--------------------------------------'
-	for key, value in interests.items():
-		print '|{:>20}|{:>15}|'.format(key,value)
-		print '--------------------------------------'
+	print '------------------------------------------'
+	print '| {:>20} | {:>15} |'.format("interest","# of occurences")
+	print '------------------------------------------'
+	for i in sorted(interests, key=interests.get, reverse=True):
+		print '| {:>20} | {:>15} |'.format(i,interests[i])
+		print '------------------------------------------'
 
 def print_family():
 	print '\n'
 	print USER+' has :'
-	print '--------------------------------------'
-	print '|{:>20}|{:>15}|'.format("family member", "# of occurences")
-	print '--------------------------------------'
-	for key, value in family.items():
-	        print '|{:>20}|{:>15}|'.format(key, value)
-		print '--------------------------------------'
+	print '------------------------------------------'
+	print '| {:>20} | {:>15} |'.format("family member", "# of occurences")
+	print '------------------------------------------'
+	for f in sorted(family, key=family.get, reverse=True):
+		print '| {:>20} | {:>15} |'.format(f,family[f])
+		print '------------------------------------------'
 
 def print_time(start_time):
 	print("--- %s seconds ---" % (time.time() - start_time))
@@ -169,11 +173,15 @@ if __name__ == '__main__':
 		else:
 			usage(1)
 
+	print("Parsing through comments and posts...")
+
 	# Get Comments / Posts:
 	TYPE = 'comments'
 	parse_user_history(TYPE)
 	TYPE = 'submitted'
 	parse_user_history(TYPE)
+
+	print("Printing results...")
 
 	# Print Overview:
 	print_top_bot(NUMTOPBOT)
