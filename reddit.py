@@ -9,6 +9,7 @@ import os
 import sys
 import requests
 import re
+import time
 # Heap
 import collections
 from heapq import heappush, heappop, nlargest, nsmallest
@@ -154,9 +155,12 @@ def print_family():
 		print '| {:>20} | {:>15} |'.format(f,family[f])
 		print '------------------------------------------'
 
+def print_time(start_time):
+	print("--- %s seconds ---" % (time.time() - start_time))
 
 # Main Execution:
 if __name__ == '__main__':
+	start_time = time.time()
 	args = sys.argv[1:]
 	while len(args) and args[0].startswith('-') and len(args[0]) > 1:
 		arg = args.pop(0)
@@ -183,3 +187,4 @@ if __name__ == '__main__':
 	print_top_bot(NUMTOPBOT)
 	print_interests()
 	print_family()
+	print_time(start_time)
