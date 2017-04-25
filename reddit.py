@@ -13,8 +13,9 @@ import re
 import collections
 from heapq import heappush, heappop, nlargest, nsmallest
 
+
 # Define Variables:
-USER = 'madviet'
+USER = 'spez'
 POSTS_PER_PAGE = 25
 HEADERS  = {'user-agent': 'reddit-{}'.format(os.environ['USER'])}
 TYPE = ''
@@ -102,25 +103,6 @@ def get_next_page(TYPE, COUNT, NEXT_PAGE):
 	parse_json(url);
 	return url['data']['after']
 
-def print_interests():
-        print USER+'\'s interests are:'
-        print '--------------------------------------'
-        print '|{:>20}|{:>15}|'.format("interest","# of occurences")
-        print '--------------------------------------'
-        for key, value in interests.items():
-                print '|{:>20}|{:>15}|'.format(key,value)
-                print '--------------------------------------'
-
-def print_family():
-        print '\n'
-        print USER+' has :'
-        print '--------------------------------------'
-        print '|{:>20}|{:>15}|'.format("family member", "# of occurences")
-        print '--------------------------------------'
-        for key, value in family.items():
-                print '|{:>20}|{:>15}|'.format(key, value)
-                print '--------------------------------------'
-
 # Heap functions
 def store_heap(SCORE, BODY, TYPE):
 	node = myPair(score = SCORE, body = BODY)
@@ -129,6 +111,8 @@ def store_heap(SCORE, BODY, TYPE):
 	else: # submitted
 		heappush(POSTHEAP, node)
 
+
+# Print Functions
 def print_top_bot(NUMTOPBOT=NUMTOPBOT):
 	print "Top", NUMTOPBOT, "Comments:"
 	a = nlargest(NUMTOPBOT, enumerate(COMMENTHEAP), key=lambda x: x[1])
@@ -146,6 +130,26 @@ def print_top_bot(NUMTOPBOT=NUMTOPBOT):
 def print_heap(heap):   # Function that prints the heap
 	for k,v in enumerate(heap):
 		print "#", k+1, "\tScore:", v[1][0], "\tBody:", v[1][1], "\n"
+
+def print_interests():
+	print USER+'\'s interests are:'
+	print '--------------------------------------'
+	print '|{:>20}|{:>15}|'.format("interest","# of occurences")
+	print '--------------------------------------'
+	for key, value in interests.items():
+		print '|{:>20}|{:>15}|'.format(key,value)
+		print '--------------------------------------'
+
+def print_family():
+	print '\n'
+	print USER+' has :'
+	print '--------------------------------------'
+	print '|{:>20}|{:>15}|'.format("family member", "# of occurences")
+	print '--------------------------------------'
+	for key, value in family.items():
+	        print '|{:>20}|{:>15}|'.format(key, value)
+		print '--------------------------------------'
+
 
 # Main Execution:
 if __name__ == '__main__':
