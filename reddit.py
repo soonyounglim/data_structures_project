@@ -133,22 +133,22 @@ def print_heap(heap):   # Function that prints the heap
 
 def print_interests():
 	print USER+'\'s interests are:'
-	print '--------------------------------------'
-	print '|{:>20}|{:>15}|'.format("interest","# of occurences")
-	print '--------------------------------------'
-	for key, value in interests.items():
-		print '|{:>20}|{:>15}|'.format(key,value)
-		print '--------------------------------------'
+	print '------------------------------------------'
+	print '| {:>20} | {:>15} |'.format("interest","# of occurences")
+	print '------------------------------------------'
+	for i in sorted(interests, key=interests.get, reverse=True):
+		print '| {:>20} | {:>15} |'.format(i,interests[i])
+		print '------------------------------------------'
 
 def print_family():
 	print '\n'
 	print USER+' has :'
-	print '--------------------------------------'
-	print '|{:>20}|{:>15}|'.format("family member", "# of occurences")
-	print '--------------------------------------'
-	for key, value in family.items():
-	        print '|{:>20}|{:>15}|'.format(key, value)
-		print '--------------------------------------'
+	print '------------------------------------------'
+	print '| {:>20} | {:>15} |'.format("family member", "# of occurences")
+	print '------------------------------------------'
+	for f in sorted(family, key=family.get, reverse=True):
+		print '| {:>20} | {:>15} |'.format(f,family[f])
+		print '------------------------------------------'
 
 
 # Main Execution:
@@ -165,11 +165,16 @@ if __name__ == '__main__':
 		else:
 			usage(1)
 
+	
+	print("Parsing through comments and posts...")
+
 	# Get Comments / Posts:
 	TYPE = 'comments'
 	parse_user_history(TYPE)
 	TYPE = 'submitted'
 	parse_user_history(TYPE)
+
+	print("Printing results...")
 
 	# Print Overview:
 	print_top_bot(NUMTOPBOT)
