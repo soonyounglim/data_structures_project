@@ -9,22 +9,34 @@ import os
 import sys
 import requests
 import re
+# Heap
+import collections
+from heapq import heappush, heappop, nlargest, nsmallest
+
 
 # Define Variables:
-USER = 'madviet'
+USER = 'spez'
 POSTS_PER_PAGE = 25
 HEADERS  = {'user-agent': 'reddit-{}'.format(os.environ['USER'])}
 TYPE = ''
+
+# Heap Variables
+NUMTOPBOT 	    = 3
+COMMENTHEAP 	= []
+POSTHEAP 		= []
 
 # Define Dictionaries:
 interests = {}
 family = {}
 
+# Define Object for use in the heap
+myPair = collections.namedtuple('myPair', ['score', 'body'])
 
 # Define Functions:
 def usage(status):
-	print '''Usage: {} -u USER
-	-u USER		The reddit user you wish to look up'''.format(
+	print '''Usage: {} ...
+	-u USER	          The reddit user you wish to look up
+	-n NUMTOP/BOT    The number of top and bottom comment/post scores'''.format(
 		os.path.basename(sys.argv[0])
 	)
 	sys.exit(status)
@@ -40,9 +52,10 @@ def parse_json(URL_JSON):
 	for i in range(0, len(URL_JSON["data"]["children"])):
 		# Get metadata for comments.
 		if (TYPE == 'comments'):
-			comment_title = get_data(URL_JSON, i, 'link_title')
-			comment_author = get_data(URL_JSON, i, 'link_author')
 			body = get_data(URL_JSON, i, 'body')
+			
+			score = get_data(URL_JSON, i, 'score')
+			store_heap(score, body, TYPE)
 			
 			find_family(body)									# Grep For Comments Based On Family.
 
@@ -50,11 +63,14 @@ def parse_json(URL_JSON):
 		else:
 			post_title = get_data(URL_JSON, i, 'title')
 			self_post = get_data(URL_JSON, i, 'is_self')
+			if self_post:
+				body = get_data(URL_JSON, i, 'selftext')
+				find_family(body)
 
-			find_family(post_title)
+			score = get_data(URL_JSON, i, 'score')
+			store_heap(score, post_title, TYPE)
 		
 		subreddit = get_data(URL_JSON, i, 'subreddit')
-
 
 		# user's interests
 		if subreddit in interests:
@@ -68,10 +84,9 @@ def find_family(BODY):
 		word = word.strip();
 		if (re.search(word, BODY)):
 			if word in family:
-                            family[word] = family[word] + 1
-                        else:
-                            family[word] = 1
-
+				family[word] = family[word] + 1
+			else:
+				family[word] = 1
 
 def get_data(URL_JSON, INDEX, DATA):
 	return URL_JSON['data']['children'][INDEX]['data'][DATA]
@@ -87,6 +102,34 @@ def get_next_page(TYPE, COUNT, NEXT_PAGE):
 	url = requests.get(web_address,headers=HEADERS).json()
 	parse_json(url);
 	return url['data']['after']
+
+# Heap functions
+def store_heap(SCORE, BODY, TYPE):
+	node = myPair(score = SCORE, body = BODY)
+	if TYPE == 'comments':
+		heappush(COMMENTHEAP, node)
+	else: # submitted
+		heappush(POSTHEAP, node)
+
+
+# Print Functions
+def print_top_bot(NUMTOPBOT=NUMTOPBOT):
+	print "Top", NUMTOPBOT, "Comments:"
+	a = nlargest(NUMTOPBOT, enumerate(COMMENTHEAP), key=lambda x: x[1])
+	print_heap(a)
+	print "Bottom", NUMTOPBOT, "Comments:"
+	a = nsmallest(NUMTOPBOT, enumerate(COMMENTHEAP), key=lambda x: x[1])
+	print_heap(a)
+	print "Top", NUMTOPBOT, "Posts:"
+	a = nlargest(NUMTOPBOT, enumerate(POSTHEAP), key=lambda x: x[1])
+	print_heap(a)
+	print "Bottom", NUMTOPBOT, "Posts:"
+	a = nsmallest(NUMTOPBOT, enumerate(POSTHEAP), key=lambda x: x[1])
+	print_heap(a)
+
+def print_heap(heap):   # Function that prints the heap
+	for k,v in enumerate(heap):
+		print "#", k+1, "\tScore:", v[1][0], "\tBody:", v[1][1], "\n"
 
 def print_interests():
 	print USER+'\'s interests are:'
@@ -107,25 +150,28 @@ def print_family():
 	        print '|{:>20}|{:>15}|'.format(key, value)
 		print '--------------------------------------'
 
+
 # Main Execution:
-args = sys.argv[1:]
-while len(args) and args[0].startswith('-') and len(args[0]) > 1:
-	arg = args.pop(0)
-	if arg == '-h':
-		usage(0)
-	elif arg == '-u':
-		USER = args.pop(0)
-	else:
-		usage(1)
+if __name__ == '__main__':
+	args = sys.argv[1:]
+	while len(args) and args[0].startswith('-') and len(args[0]) > 1:
+		arg = args.pop(0)
+		if arg == '-h':
+			usage(0)
+		elif arg == '-n':
+			NUMTOPBOT = int(args.pop(0))
+		elif arg == '-u':
+			USER = args.pop(0)
+		else:
+			usage(1)
 
+	# Get Comments / Posts:
+	TYPE = 'comments'
+	parse_user_history(TYPE)
+	TYPE = 'submitted'
+	parse_user_history(TYPE)
 
-# Get Comments / Posts:
-TYPE = 'comments'
-parse_user_history(TYPE)
-TYPE = 'submitted'
-parse_user_history(TYPE)
-
-
-# Print Overview:
-print_interests()
-print_family()
+	# Print Overview:
+	print_top_bot(NUMTOPBOT)
+	print_interests()
+	print_family()
