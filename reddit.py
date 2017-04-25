@@ -103,14 +103,23 @@ def get_next_page(TYPE, COUNT, NEXT_PAGE):
 	return url['data']['after']
 
 def print_interests():
-	print USER+'\'s interests are:'
-	for key, value in interests.items():
-		print '{}\t{}'.format(key, value)
+        print USER+'\'s interests are:'
+        print '--------------------------------------'
+        print '|{:>20}|{:>15}|'.format("interest","# of occurences")
+        print '--------------------------------------'
+        for key, value in interests.items():
+                print '|{:>20}|{:>15}|'.format(key,value)
+                print '--------------------------------------'
 
 def print_family():
-	print USER+' has :'
-	for key, value in family.items():
-	        print '{}\t{}'.format(key, value)
+        print '\n'
+        print USER+' has :'
+        print '--------------------------------------'
+        print '|{:>20}|{:>15}|'.format("family member", "# of occurences")
+        print '--------------------------------------'
+        for key, value in family.items():
+                print '|{:>20}|{:>15}|'.format(key, value)
+                print '--------------------------------------'
 
 # Heap functions
 def store_heap(SCORE, BODY, TYPE):
