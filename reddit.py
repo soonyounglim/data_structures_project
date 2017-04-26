@@ -134,9 +134,9 @@ def print_top_bot(NUMTOPBOT=NUMTOPBOT):
 def print_heap(heap, TYPE=TYPE):   # Function that prints the heap
 	for k,v in enumerate(heap):
 		if TYPE == 'comments':
-			print "\nComment: #{}\tScore: {}\n{}\n".format(k+1, v[1][0], v[1][1].rstrip())
+			print "#", k+1, "\tScore:", v[1][0], "\tComment:", v[1][1], "\n"
 		else:
-			print "\nPost: #{}\tScore: {}\nTitle: {}\n".format(k+1, v[1][0], v[1][1].rstrip())
+			print "#", k+1, "\tScore:", v[1][0], "\tTitle:", v[1][1], "\n"
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
