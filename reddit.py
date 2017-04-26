@@ -141,7 +141,7 @@ def print_interests():
 	print '------------------------------------------'
 	print '| {:>20} | {:>15} |'.format("interest","# of occurences")
 	print '------------------------------------------'
-	for i in sorted(interests, key=interests.get, reverse=True):
+	for i in sorted(interests, key=interests.get, reverse=True)[:10]:
 		print '| {:>20} | {:>15} |'.format(i,interests[i])
 		print '------------------------------------------'
 
