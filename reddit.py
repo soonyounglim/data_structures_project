@@ -114,15 +114,19 @@ def store_heap(SCORE, BODY, TYPE):
     
 # Print Functions
 def print_top_bot(NUMTOPBOT=NUMTOPBOT):
+	print "\n-----------------------------------------------------------------------"
 	print "Top", NUMTOPBOT, "Comments:"
 	a = nlargest(NUMTOPBOT, enumerate(COMMENTHEAP), key=lambda x: x[1])
 	print_heap(a, 'comments')
+	print "\n-----------------------------------------------------------------------"
 	print "Bottom", NUMTOPBOT, "Comments:"
 	a = nsmallest(NUMTOPBOT, enumerate(COMMENTHEAP), key=lambda x: x[1])
 	print_heap(a, 'comments')
+	print "\n-----------------------------------------------------------------------"
 	print "Top", NUMTOPBOT, "Posts:"
 	a = nlargest(NUMTOPBOT, enumerate(POSTHEAP), key=lambda x: x[1])
 	print_heap(a, 'submitted')
+	print "\n-----------------------------------------------------------------------"
 	print "Bottom", NUMTOPBOT, "Posts:"
 	a = nsmallest(NUMTOPBOT, enumerate(POSTHEAP), key=lambda x: x[1])
 	print_heap(a, 'submitted')
@@ -130,13 +134,14 @@ def print_top_bot(NUMTOPBOT=NUMTOPBOT):
 def print_heap(heap, TYPE=TYPE):   # Function that prints the heap
 	for k,v in enumerate(heap):
 		if TYPE == 'comments':
-			print "#", k+1, "\tScore:", v[1][0], "\tComment:", v[1][1], "\n"
+			print "\nComment: #{}\tScore: {}\n{}\n".format(k+1, v[1][0], v[1][1].rstrip())
 		else:
-			print "#", k+1, "\tScore:", v[1][0], "\tTitle:", v[1][1], "\n"
+			print "\nPost: #{}\tScore: {}\nTitle: {}\n".format(k+1, v[1][0], v[1][1].rstrip())
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 def print_interests():
+	print '\n'
 	print USER+'\'s interests are:'
 	print '------------------------------------------'
 	print '| {:>20} | {:>15} |'.format("interest","# of occurences")
