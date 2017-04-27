@@ -13,11 +13,11 @@
 #
 ###
 
-PATH = './reddit.csv'
+FILE        = 'reddit.csv'
 
 if __name__ == '__main__':
 	# Open and read csv file
-	with open(PATH, 'r') as f:
+	with open(FILE, 'r') as f:
 		for line in f:
 			print line,
 
