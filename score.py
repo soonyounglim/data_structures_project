@@ -19,6 +19,7 @@ if __name__ == '__main__':
 	# Open and read csv file
 	with open(FILE, 'r') as f:
 		for line in f:
+			line = line.replace(",", " ")
 			print line,
 
 	# Close csv file

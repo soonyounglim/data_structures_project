@@ -201,7 +201,7 @@ def subreddit_score(SUBREDDIT, SCORE, TYPE):
 
 def make_csv():
 	with open('reddit.csv', 'wb') as csvfile:
-	    csvwriter = csv.writer(csvfile, delimiter=' ', quoting=csv.QUOTE_MINIMAL)
+	    csvwriter = csv.writer(csvfile, delimiter=',', quoting=csv.QUOTE_MINIMAL)
 	    for subreddit in comment_scores:
 	    	if subreddit in post_scores:
 			    csvwriter.writerow([subreddit, comment_scores[subreddit], post_scores[subreddit]])
