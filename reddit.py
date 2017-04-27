@@ -3,18 +3,15 @@
 #  Authors    :  Soonyoung Lim, Anthony Luc, and Donald Luc
 #  Data Structures Final Project
 
-
 # Import Modules:
+import collections
 import csv
+from heapq import heappush, heappop, nlargest, nsmallest
 import os
 import sys
-import requests
 import re
+import requests
 import time
-# Heap
-import collections
-from heapq import heappush, heappop, nlargest, nsmallest
-
 
 # Define Variables:
 USER              = 'spez'
@@ -29,15 +26,13 @@ SILENT            = False
 NUMTOPBOT 	      = 3
 COMMENTHEAP 	  = []
 POSTHEAP 		  = []
+myPair            = collections.namedtuple('myPair', ['score', 'body'])    # Define Object for use in the heap
 
-# Define Dictionaries:
+# Dictionaries
 interests         = {}
 family            = {}
 comment_scores    = {}
 post_scores       = {}
-
-# Define Object for use in the heap
-myPair = collections.namedtuple('myPair', ['score', 'body'])
 
 # Define Functions:
 def usage(status):
@@ -69,7 +64,7 @@ def parse_json(URL_JSON):
 			store_heap(score, body, TYPE)
 			subreddit_score(subreddit, score, TYPE)
 
-			find_family(body)									# Grep For Comments Based On Family.
+			find_family(body)    # Grep For Comments Based On Family.
 
 		# Get metadata for post/submitted.
 		else:
@@ -122,7 +117,7 @@ def store_heap(SCORE, BODY, TYPE):
 	else: # submitted
 		heappush(POSTHEAP, node)
     
-# Print Functions
+# Print Functions # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 def print_top_bot(NUMTOPBOT=NUMTOPBOT):
 	print "Bottom", NUMTOPBOT, "Comments:"
 	a = nsmallest(NUMTOPBOT, enumerate(COMMENTHEAP), key=lambda x: x[1])
@@ -139,7 +134,6 @@ def print_heap(heap, TYPE=TYPE):   # Function that prints the heap
 		else:
 			print "#", k+1, "\tScore:", v[1][0], "\tTitle:", v[1][1], "\n"
 
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 def print_interests():
 	print '\n'
 	print USER+'\'s interests are:'
@@ -159,7 +153,6 @@ def print_family():
 	for f in sorted(family, key=family.get, reverse=True):
 		print '| {:>20} | {:>15} |'.format(f,family[f])
 		print '------------------------------------------'
-
 
 def print_subreddit_comment_score():
 	print '\n'
@@ -184,7 +177,6 @@ def print_subreddit_post_score():
 def print_time(start_time):
 	print("--- %s seconds ---" % (time.time() - start_time))
 
-
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 def subreddit_score(SUBREDDIT, SCORE, TYPE):
 	if TYPE == 'comments':
@@ -205,6 +197,8 @@ def make_csv():
 	    	if subreddit in post_scores:
 			    csvwriter.writerow([subreddit, comment_scores[subreddit], post_scores[subreddit]])
 
+
+
 # Main Execution # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 if __name__ == '__main__':
 	start_time = time.time()
@@ -223,7 +217,6 @@ if __name__ == '__main__':
 			SILENT = True
 		elif arg == '-u':
 			USER = args.pop(0)
-		
 		else:
 			usage(1)
 
@@ -234,17 +227,19 @@ if __name__ == '__main__':
 		TYPE = 'submitted'
 		parse_user_history(TYPE)
 	else:
-		print("Parsing through comments and posts...")
+		# Print to stdout
+		print("Parsing through {} comments and posts...".format(USER + '\'s'))
 		TYPE = 'comments'
 		parse_user_history(TYPE)
 		TYPE = 'submitted'
 		parse_user_history(TYPE)
 		print("Printing results...")
 		print_top_bot(NUMTOPBOT)
-		print_interests()
-		print_family()
 		print_subreddit_comment_score()
 		print_subreddit_post_score()
+		print_interests()
+		print_family()
+		print_time(start_time)
 
 	# Generate CSV file
 	if CSV:
@@ -253,13 +248,7 @@ if __name__ == '__main__':
 	if PNG:
 		if CSV == False:
 			make_csv()
-		# os.system('sort -f reddit.csv |  | tee reddit.csv')
 		os.system('./score.py > score.dat')
 		os.system('gnuplot < score.plt > score.png')
 
 
-	# Print Overview:
-	print_top_bot(NUMTOPBOT)
-	print_interests()
-	print_family()
-	print_time(start_time)
