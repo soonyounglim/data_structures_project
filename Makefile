@@ -1,5 +1,6 @@
 # Adapted from Reading04 in Sys Program's class
 # Anthony Luc
+# This is not actually used in the main python script
 
 all:	score.png
 

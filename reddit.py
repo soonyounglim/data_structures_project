@@ -200,14 +200,11 @@ def subreddit_score(SUBREDDIT, SCORE, TYPE):
 			post_scores[SUBREDDIT] = 1
 
 def make_csv():
-	# COMMENTHEAP
-	# POSTHEAP
-	with open('a_reddit.csv', 'wb') as csvfile:
+	with open('reddit.csv', 'wb') as csvfile:
 	    csvwriter = csv.writer(csvfile, delimiter=' ', quoting=csv.QUOTE_MINIMAL)
-	    Subreddit = 'awwww'
-	    csvwriter.writerow([Subreddit, 'b'])
-	    csvwriter.writerow(['league', '500', '200'])
-
+	    for subreddit in comment_scores:
+	    	if subreddit in post_scores:
+			    csvwriter.writerow([subreddit, comment_scores[subreddit], post_scores[subreddit]])
 
 # Main Execution # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 if __name__ == '__main__':
@@ -256,6 +253,7 @@ if __name__ == '__main__':
 	if PNG:
 		if CSV == False:
 			make_csv()
+		# os.system('sort -f reddit.csv |  | tee reddit.csv')
 		os.system('./score.py > score.dat')
 		os.system('gnuplot < score.plt > score.png')
 
