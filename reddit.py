@@ -10,6 +10,7 @@ import os
 import sys
 import requests
 import re
+import time
 # Heap
 import collections
 from heapq import heappush, heappop, nlargest, nsmallest
@@ -123,20 +124,12 @@ def store_heap(SCORE, BODY, TYPE):
     
 # Print Functions
 def print_top_bot(NUMTOPBOT=NUMTOPBOT):
-	print "Top", NUMTOPBOT, "Comments:"
-	a = nlargest(NUMTOPBOT, enumerate(COMMENTHEAP), key=lambda x: x[1])
-	print_heap(a, 'comments')
-
 	print "Bottom", NUMTOPBOT, "Comments:"
 	a = nsmallest(NUMTOPBOT, enumerate(COMMENTHEAP), key=lambda x: x[1])
 	print_heap(a, 'comments')
 
 	print "Top", NUMTOPBOT, "Posts:"
 	a = nlargest(NUMTOPBOT, enumerate(POSTHEAP), key=lambda x: x[1])
-	print_heap(a, 'submitted')
-
-	print "Bottom", NUMTOPBOT, "Posts:"
-	a = nsmallest(NUMTOPBOT, enumerate(POSTHEAP), key=lambda x: x[1])
 	print_heap(a, 'submitted')
 
 def print_heap(heap, TYPE=TYPE):   # Function that prints the heap
@@ -148,11 +141,12 @@ def print_heap(heap, TYPE=TYPE):   # Function that prints the heap
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 def print_interests():
+	print '\n'
 	print USER+'\'s interests are:'
 	print '------------------------------------------'
 	print '| {:>20} | {:>15} |'.format("interest","# of occurences")
 	print '------------------------------------------'
-	for i in sorted(interests, key=interests.get, reverse=True):
+	for i in sorted(interests, key=interests.get, reverse=True)[:10]:
 		print '| {:>20} | {:>15} |'.format(i,interests[i])
 		print '------------------------------------------'
 
@@ -165,6 +159,7 @@ def print_family():
 	for f in sorted(family, key=family.get, reverse=True):
 		print '| {:>20} | {:>15} |'.format(f,family[f])
 		print '------------------------------------------'
+
 
 def print_subreddit_comment_score():
 	print '\n'
@@ -185,6 +180,10 @@ def print_subreddit_post_score():
 	for s in sorted(post_scores, key=post_scores.get, reverse=True):
 		print '| {:>20} | {:>15} |'.format(s,post_scores[s])
 		print '------------------------------------------'
+
+def print_time(start_time):
+	print("--- %s seconds ---" % (time.time() - start_time))
+
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 def subreddit_score(SUBREDDIT, SCORE, TYPE):
@@ -208,6 +207,7 @@ def make_csv():
 
 # Main Execution # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 if __name__ == '__main__':
+	start_time = time.time()
 	args = sys.argv[1:]
 	while len(args) and args[0].startswith('-') and len(args[0]) > 1:
 		arg = args.pop(0)
@@ -257,3 +257,9 @@ if __name__ == '__main__':
 		os.system('./score.py > score.dat')
 		os.system('gnuplot < score.plt > score.png')
 
+
+	# Print Overview:
+	print_top_bot(NUMTOPBOT)
+	print_interests()
+	print_family()
+	print_time(start_time)
