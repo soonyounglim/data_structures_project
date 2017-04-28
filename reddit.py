@@ -23,22 +23,22 @@ PNG               = False
 SILENT            = False
 
 # Heap Variables
-NUMTOPBOT 	      = 3
-COMMENTHEAP 	  = []
-POSTHEAP 		  = []
+NUMTOPBOT 	      = 3      # Total number to print
+COMMENTHEAP 	  = []     # List with myPair tuples of score and body
+POSTHEAP 		  = []     # List with myPair tuples of score and body
 myPair            = collections.namedtuple('myPair', ['score', 'body'])    # Define Object for use in the heap
 
 # Dictionaries
-interests         = {}
-family            = {}
-comment_scores    = {}
-post_scores       = {}
+interests         = {}     # Key: Subreddit       Value: Total occurrence
+family            = {}     # Key: Attribute       Value: Total occurrence
+comment_scores    = {}     # Key: Subreddit       Value: Score
+post_scores       = {}     # Key: Subreddit       Value: Score
 
 # Define Functions:
 def usage(status):
 	print '''Usage: {} ...
 	-c               Create a csv file
-	-n NUMTOP/BOT    The number of top and bottom comment/post scores
+	-n NUMBER        The number of top and bottom comment/post scores
 	-s SILENT        Silence output
 	-p               Generate a barchart of data in a png
 	-u USER	         The reddit user you wish to look up'''.format(
@@ -46,6 +46,7 @@ def usage(status):
 	)
 	sys.exit(status)
 
+# Parsing functions # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 def parse_user_history(TYPE):
 	next_page = get_initial_page(TYPE)
 	count = POSTS_PER_PAGE
@@ -78,21 +79,11 @@ def parse_json(URL_JSON):
 			store_heap(score, post_title, TYPE)
 			subreddit_score(subreddit, score, TYPE)
 
-		# user's interests
+		# Update user's interests counter
 		if subreddit in interests:
 			interests[subreddit] = interests[subreddit] + 1
 		else:
 			interests[subreddit] = 1
-
-def find_family(BODY):
-	f = open("family.txt")
-	for word in f.readlines():
-		word = word.strip();
-		if (re.search(word, BODY)):
-			if word in family:
-				family[word] = family[word] + 1
-			else:
-				family[word] = 1
 
 def get_data(URL_JSON, INDEX, DATA):
 	return URL_JSON['data']['children'][INDEX]['data'][DATA]
@@ -109,14 +100,43 @@ def get_next_page(TYPE, COUNT, NEXT_PAGE):
 	parse_json(url);
 	return url['data']['after']
 
-# Heap functions # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# Utility functions # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+def find_family(BODY):
+	f = open("family.txt")
+	for word in f.readlines():
+		word = word.strip();
+		if (re.search(word, BODY)):
+			if word in family:
+				family[word] = family[word] + 1
+			else:
+				family[word] = 1
+
+def make_csv():
+	with open('reddit.csv', 'wb') as csvfile:
+	    csvwriter = csv.writer(csvfile, delimiter=',', quoting=csv.QUOTE_MINIMAL)
+	    for subreddit in comment_scores:
+	    	if subreddit in post_scores:
+			    csvwriter.writerow([subreddit, comment_scores[subreddit], post_scores[subreddit]])
+
 def store_heap(SCORE, BODY, TYPE):
 	node = myPair(score = SCORE, body = BODY)
 	if TYPE == 'comments':
 		heappush(COMMENTHEAP, node)
 	else: # submitted
 		heappush(POSTHEAP, node)
-    
+
+def subreddit_score(SUBREDDIT, SCORE, TYPE):
+	if TYPE == 'comments':
+		if SUBREDDIT in comment_scores:
+			comment_scores[SUBREDDIT] = comment_scores[SUBREDDIT] + SCORE
+		else:
+			comment_scores[SUBREDDIT] = 1
+	else:
+		if SUBREDDIT in post_scores:
+			post_scores[SUBREDDIT] = post_scores[SUBREDDIT] + SCORE
+		else:
+			post_scores[SUBREDDIT] = 1
+
 # Print Functions # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 def print_top_bot(NUMTOPBOT=NUMTOPBOT):
 	print "Top", NUMTOPBOT, "Comments:"
@@ -183,27 +203,6 @@ def print_family():
 def print_time(start_time):
 	print("--- %s seconds ---" % (time.time() - start_time))
 
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-def subreddit_score(SUBREDDIT, SCORE, TYPE):
-	if TYPE == 'comments':
-		if SUBREDDIT in comment_scores:
-			comment_scores[SUBREDDIT] = comment_scores[SUBREDDIT] + SCORE
-		else:
-			comment_scores[SUBREDDIT] = 1
-	else:
-		if SUBREDDIT in post_scores:
-			post_scores[SUBREDDIT] = post_scores[SUBREDDIT] + SCORE
-		else:
-			post_scores[SUBREDDIT] = 1
-
-def make_csv():
-	with open('reddit.csv', 'wb') as csvfile:
-	    csvwriter = csv.writer(csvfile, delimiter=',', quoting=csv.QUOTE_MINIMAL)
-	    for subreddit in comment_scores:
-	    	if subreddit in post_scores:
-			    csvwriter.writerow([subreddit, comment_scores[subreddit], post_scores[subreddit]])
-
-
 
 # Main Execution # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 if __name__ == '__main__':
@@ -226,14 +225,14 @@ if __name__ == '__main__':
 		else:
 			usage(1)
 
-	# Parse through data:
+	# Parse through reddit JSON data.
 	if SILENT:
 		TYPE = 'comments'
 		parse_user_history(TYPE)
 		TYPE = 'submitted'
 		parse_user_history(TYPE)
 	else:
-		# Print to stdout
+		# Print to stdout.
 		print("Parsing through {} comments and posts...".format(USER + '\'s'))
 		TYPE = 'comments'
 		parse_user_history(TYPE)
@@ -247,10 +246,11 @@ if __name__ == '__main__':
 		print_family()
 		print_time(start_time)
 
-	# Generate CSV file
+	# Generate CSV file.
 	if CSV:
 		make_csv()
 
+	# Generate PNG
 	if PNG:
 		if CSV == False:
 			make_csv()
