@@ -24,8 +24,8 @@ SILENT            = False
 
 # Heap Variables
 NUMTOPBOT 	      = 3      # Total number to print
-COMMENTHEAP 	  = []     # List with myPair tuples of score and body
-POSTHEAP 		  = []     # List with myPair tuples of score and body
+COMMENTHEAP 	  = []     # Heap with myPair tuples of score and body
+POSTHEAP 		  = []     # Heap with myPair tuples of score and body
 myPair            = collections.namedtuple('myPair', ['score', 'body'])    # Define Object for use in the heap
 
 # Dictionaries
