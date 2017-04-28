@@ -119,6 +119,10 @@ def store_heap(SCORE, BODY, TYPE):
     
 # Print Functions # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 def print_top_bot(NUMTOPBOT=NUMTOPBOT):
+	print "Top", NUMTOPBOT, "Comments:"
+	a = nlargest(NUMTOPBOT, enumerate(COMMENTHEAP), key=lambda x: x[1])
+	print_heap(a, 'comments')
+
 	print "Bottom", NUMTOPBOT, "Comments:"
 	a = nsmallest(NUMTOPBOT, enumerate(COMMENTHEAP), key=lambda x: x[1])
 	print_heap(a, 'comments')
@@ -134,9 +138,31 @@ def print_heap(heap, TYPE=TYPE):   # Function that prints the heap
 		else:
 			print "#", k+1, "\tScore:", v[1][0], "\tTitle:", v[1][1], "\n"
 
+def print_subreddit_comment_score():
+	print '\n'
+	print USER+' comment score in subreddit :'
+	print '------------------------------------------'
+	print '| {:>20} | {:>15} |'.format("Subreddit", "Score")
+	print '------------------------------------------'
+	for s in sorted(comment_scores, key=comment_scores.get, reverse=True):
+		if comment_scores[s] != 1:  # Ignore insignificant comment scores
+			print '| {:>20} | {:>15} |'.format(s,comment_scores[s])
+			print '------------------------------------------'
+
+def print_subreddit_post_score():
+	print '\n'
+	print USER+' post score in subreddit :'
+	print '------------------------------------------'
+	print '| {:>20} | {:>15} |'.format("Subreddit", "Score")
+	print '------------------------------------------'
+	for s in sorted(post_scores, key=post_scores.get, reverse=True):
+		if post_scores[s] != 1:     # Ignore insignificant post scores
+			print '| {:>20} | {:>15} |'.format(s,post_scores[s])
+			print '------------------------------------------'
+
 def print_interests():
 	print '\n'
-	print USER+'\'s interests are:'
+	print USER+'\'s top interests are:'
 	print '------------------------------------------'
 	print '| {:>20} | {:>15} |'.format("interest","# of occurences")
 	print '------------------------------------------'
@@ -152,26 +178,6 @@ def print_family():
 	print '------------------------------------------'
 	for f in sorted(family, key=family.get, reverse=True):
 		print '| {:>20} | {:>15} |'.format(f,family[f])
-		print '------------------------------------------'
-
-def print_subreddit_comment_score():
-	print '\n'
-	print USER+' comment score in subreddit :'
-	print '------------------------------------------'
-	print '| {:>20} | {:>15} |'.format("Subreddit", "Score")
-	print '------------------------------------------'
-	for s in sorted(comment_scores, key=comment_scores.get, reverse=True):
-		print '| {:>20} | {:>15} |'.format(s,comment_scores[s])
-		print '------------------------------------------'
-
-def print_subreddit_post_score():
-	print '\n'
-	print USER+' post score in subreddit :'
-	print '------------------------------------------'
-	print '| {:>20} | {:>15} |'.format("Subreddit", "Score")
-	print '------------------------------------------'
-	for s in sorted(post_scores, key=post_scores.get, reverse=True):
-		print '| {:>20} | {:>15} |'.format(s,post_scores[s])
 		print '------------------------------------------'
 
 def print_time(start_time):
@@ -248,7 +254,10 @@ if __name__ == '__main__':
 	if PNG:
 		if CSV == False:
 			make_csv()
-		os.system('./score.py > score.dat')
+		os.system('./score.py > score_temp.dat')
+		os.system('sort -f score_temp.dat > score.dat')
 		os.system('gnuplot < score.plt > score.png')
-
+		os.system('rm score_temp.dat score.dat')
+		if CSV == False:
+			os.system('rm reddit.csv')
 
