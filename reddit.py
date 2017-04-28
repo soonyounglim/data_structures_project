@@ -256,7 +256,7 @@ if __name__ == '__main__':
 			make_csv()
 		os.system('./score.py > score_temp.dat')
 		os.system('sort -f score_temp.dat > score.dat')
-		os.system('gnuplot < score.plt > score.png')
+		os.system('gnuplot < score.plt > {}.png'.format(USER))
 		os.system('rm score_temp.dat score.dat')
 		if CSV == False:
 			os.system('rm reddit.csv')
