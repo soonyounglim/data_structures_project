@@ -27,7 +27,8 @@ COMMENTHEAP 	= []
 POSTHEAP 		= []
 
 # Define Dictionaries:
-interests = {}
+posts_interests = {}
+comments_interests = {}
 family = {}
 
 # Define Object for use in the heap
@@ -59,6 +60,11 @@ def parse_json(URL_JSON):
 			store_heap(score, body, TYPE)
 			
 			find_family(body)									# Grep For Comments Based On Family.
+			subreddit = get_data(URL_JSON, i, 'subreddit')
+			if subreddit in interests:
+                        	interests[subreddit] = interests[subreddit] + 1
+                	else:
+                        	interests[subreddit] = 1
 
 		# Get metadata for post/submitted.
 		else:
@@ -70,14 +76,11 @@ def parse_json(URL_JSON):
 
 			score = get_data(URL_JSON, i, 'score')
 			store_heap(score, post_title, TYPE)
-		
-		subreddit = get_data(URL_JSON, i, 'subreddit')
-
-		# user's interests
-		if subreddit in interests:
-			interests[subreddit] = interests[subreddit] + 1
-		else:
-			interests[subreddit] = 1
+			subreddit = get_data(URL_JSON, i, 'subreddit')
+			if subreddit in interests:
+                        	interests[subreddit] = interests[subreddit] + 1
+                	else:
+                        	interests[subreddit] = 1
 
 def find_family(BODY):
 	f = open("family.txt")
@@ -114,18 +117,23 @@ def store_heap(SCORE, BODY, TYPE):
     
 # Print Functions
 def print_top_bot(NUMTOPBOT=NUMTOPBOT):
+	print '-----------------------------------------------------'
 	print "Top", NUMTOPBOT, "Comments:"
 	a = nlargest(NUMTOPBOT, enumerate(COMMENTHEAP), key=lambda x: x[1])
 	print_heap(a, 'comments')
+	print '-----------------------------------------------------'
 	print "Bottom", NUMTOPBOT, "Comments:"
 	a = nsmallest(NUMTOPBOT, enumerate(COMMENTHEAP), key=lambda x: x[1])
 	print_heap(a, 'comments')
+	print '-----------------------------------------------------'
 	print "Top", NUMTOPBOT, "Posts:"
 	a = nlargest(NUMTOPBOT, enumerate(POSTHEAP), key=lambda x: x[1])
 	print_heap(a, 'submitted')
+	print '-----------------------------------------------------'
 	print "Bottom", NUMTOPBOT, "Posts:"
 	a = nsmallest(NUMTOPBOT, enumerate(POSTHEAP), key=lambda x: x[1])
 	print_heap(a, 'submitted')
+	print '-----------------------------------------------------'
 
 def print_heap(heap, TYPE=TYPE):   # Function that prints the heap
 	for k,v in enumerate(heap):
@@ -146,7 +154,6 @@ def print_interests():
 		print '------------------------------------------'
 
 def print_family():
-	print '\n'
 	print USER+' has :'
 	print '------------------------------------------'
 	print '| {:>20} | {:>15} |'.format("family member", "# of occurences")
