@@ -48,7 +48,14 @@ def usage(status):
 
 # Parsing functions # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 def parse_user_history(TYPE):
-	next_page = get_initial_page(TYPE)
+	# Check if user exists by seeing if initial page is valid.
+	try:
+		next_page = get_initial_page(TYPE)
+	except KeyError:
+		print "Error: user {} does not exist.".format(USER)
+		sys.exit(1)
+
+	# Continue parsing through pages...
 	count = POSTS_PER_PAGE
 	while (next_page):
 		next_page = get_next_page(TYPE, count, next_page)
@@ -254,7 +261,7 @@ if __name__ == '__main__':
 	if PNG:
 		if CSV == False:
 			make_csv()
-		os.system('./score.py > score_temp.dat')
+		os.system('./score.py > score_temp.dat')       # TODO: new plt file and new png names
 		os.system('sort -f score_temp.dat > score.dat')
 		os.system('gnuplot < score.plt > {}.png'.format(USER))
 		os.system('rm score_temp.dat score.dat')
