@@ -23,7 +23,6 @@ PNG               = False
 SILENT            = False
 
 # Heap Variables
-<<<<<<< HEAD
 NUMTOPBOT 	    = 3
 COMMENTHEAP 	= []
 POSTHEAP 		= []
@@ -31,13 +30,12 @@ POSTHEAP 		= []
 # Define Dictionaries:
 posts_interests = {}
 comments_interests = {}
+interests = {}
 family = {}
-=======
 NUMTOPBOT 	      = 3      # Total number to print
 COMMENTHEAP 	  = []     # Heap with myPair tuples of score and body
 POSTHEAP 		  = []     # Heap with myPair tuples of score and body
 myPair            = collections.namedtuple('myPair', ['score', 'body'])    # Define Object for use in the heap
->>>>>>> f5f2adc5a392feaaca59b1212e95f2cfffd3caa3
 
 # Dictionaries
 interests         = {}     # Key: Subreddit       Value: Total occurrence
@@ -81,19 +79,15 @@ def parse_json(URL_JSON):
 		if (TYPE == 'comments'):
 			body = get_data(URL_JSON, i, 'body')
 			store_heap(score, body, TYPE)
-<<<<<<< HEAD
-			
-			find_family(body)									# Grep For Comments Based On Family.
-			subreddit = get_data(URL_JSON, i, 'subreddit')
-			if subreddit in interests:
-                        	interests[subreddit] = interests[subreddit] + 1
-                	else:
-                        	interests[subreddit] = 1
-=======
 			subreddit_score(subreddit, score, TYPE)
 
+			subreddit = get_data(URL_JSON, i, 'subreddit')
+			if subreddit in comments_interests:
+                        	comments_interests[subreddit] = comments_interests[subreddit] + 1
+                	else:
+                        	comments_interests[subreddit] = 1
+
 			find_family(body)    # Grep For Comments Based On Family.
->>>>>>> f5f2adc5a392feaaca59b1212e95f2cfffd3caa3
 
 		# Get metadata for post/submitted.
 		else:
@@ -105,21 +99,19 @@ def parse_json(URL_JSON):
 				find_family(body)
 
 			store_heap(score, post_title, TYPE)
-<<<<<<< HEAD
-			subreddit = get_data(URL_JSON, i, 'subreddit')
-			if subreddit in interests:
-                        	interests[subreddit] = interests[subreddit] + 1
-                	else:
-                        	interests[subreddit] = 1
-=======
 			subreddit_score(subreddit, score, TYPE)
+
+			subreddit = get_data(URL_JSON, i, 'subreddit')
+			if subreddit in posts_interests:
+                        	posts_interests[subreddit] = posts_interests[subreddit] + 1
+                	else:
+                        	posts_interests[subreddit] = 1
 
 		# Update user's interests counter
 		if subreddit in interests:
 			interests[subreddit] = interests[subreddit] + 1
 		else:
 			interests[subreddit] = 1
->>>>>>> f5f2adc5a392feaaca59b1212e95f2cfffd3caa3
 
 def get_data(URL_JSON, INDEX, DATA):
 	return URL_JSON['data']['children'][INDEX]['data'][DATA]
@@ -175,25 +167,9 @@ def subreddit_score(SUBREDDIT, SCORE, TYPE):
 
 # Print Functions # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 def print_top_bot(NUMTOPBOT=NUMTOPBOT):
-	print '-----------------------------------------------------'
 	print "Top", NUMTOPBOT, "Comments:"
 	a = nlargest(NUMTOPBOT, enumerate(COMMENTHEAP), key=lambda x: x[1])
 	print_heap(a, 'comments')
-<<<<<<< HEAD
-	print '-----------------------------------------------------'
-	print "Bottom", NUMTOPBOT, "Comments:"
-	a = nsmallest(NUMTOPBOT, enumerate(COMMENTHEAP), key=lambda x: x[1])
-	print_heap(a, 'comments')
-	print '-----------------------------------------------------'
-	print "Top", NUMTOPBOT, "Posts:"
-	a = nlargest(NUMTOPBOT, enumerate(POSTHEAP), key=lambda x: x[1])
-	print_heap(a, 'submitted')
-	print '-----------------------------------------------------'
-	print "Bottom", NUMTOPBOT, "Posts:"
-	a = nsmallest(NUMTOPBOT, enumerate(POSTHEAP), key=lambda x: x[1])
-	print_heap(a, 'submitted')
-	print '-----------------------------------------------------'
-=======
 
 	print "Bottom", NUMTOPBOT, "Comments:"
 	a = nsmallest(NUMTOPBOT, enumerate(COMMENTHEAP), key=lambda x: x[1])
@@ -202,7 +178,6 @@ def print_top_bot(NUMTOPBOT=NUMTOPBOT):
 	print "Top", NUMTOPBOT, "Posts:"
 	a = nlargest(NUMTOPBOT, enumerate(POSTHEAP), key=lambda x: x[1])
 	print_heap(a, 'submitted')
->>>>>>> f5f2adc5a392feaaca59b1212e95f2cfffd3caa3
 
 def print_heap(heap, TYPE=TYPE):   # Function that prints the heap
 	for k,v in enumerate(heap):
