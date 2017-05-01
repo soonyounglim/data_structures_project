@@ -14,7 +14,7 @@ import requests
 import time
 
 # Define Variables:
-USER               = 'GB_LFC'
+USER               = 'spez'
 POSTS_PER_PAGE     = 25
 HEADERS            = {'user-agent': 'reddit-{}'.format(os.environ['USER'])}
 TYPE               = ''
@@ -159,8 +159,6 @@ def find_regex(BODY, URL):
 		family_list.append(found_family.group())
 		family_list.append(URL)
 
-
-
 def make_csv(CSV):
 	# Set string for CSV file name and write to CSV
 	CSV_FILE = ''
@@ -278,28 +276,36 @@ def print_interests():
 
 def print_regex():
 	print '\n'
-	print USER+' is a:'
+	print USER+' is:'
 	print '------------------------------------------'
 	count = 0
 	if male_list:
 		for m in male_list:
+			count = count + 1
 			print m
+			if (count % 2) == 0:
+				print '\n'
 
 	count = 0
 	if female_list:
 		for f in female_list:
+			count = count + 1
 			print f
+			if (count % 2) == 0:
+				print '\n'
 
 	count = 0
 	if age_list:
 		for a in age_list:
+			count = count + 1
 			print a
+			if (count % 2) == 0:
+				print '\n'
 
 	count = 0
 	if not (male_list or female_list or age_list):
 		print 'Cannot determine gender and age'
 
-	print '\n'
 	print USER+' has family members:'
 	print '------------------------------------------'
 	count = 0
@@ -344,18 +350,28 @@ if __name__ == '__main__':
 		TYPE = 'submitted'
 		parse_user_history(TYPE)
 	else:
-		# Print to stdout.
+		# Print comments and posts.
 		print("Parsing through {} comments and posts...".format(USER + '\'s'))
+		
 		TYPE = 'comments'
 		parse_user_history(TYPE)
+		print("Finished parsing comments...")
+		
 		TYPE = 'submitted'
 		parse_user_history(TYPE)
+		print("Finished parsing submitted posts...")
+
+		# Print top comments and posts.
 		print("Printing results...")
 		print_top_bot(NUMTOPBOT)
 		print_subreddit_comment_score()
 		print_subreddit_post_score()
+
+		# Print interests and particular attributes.
 		print_interests()
 		print_regex()
+
+		# Print time.
 		print_time(start_time)
 
 	# Generate CSV file.
@@ -364,39 +380,39 @@ if __name__ == '__main__':
 		make_csv('post')
 		make_csv('average')
 
-	# Generate PNG
+	# Generate PNG.
 	if PNG:
 		if CSV == False:
 			make_csv('comment')
 			make_csv('post')
 			make_csv('average')
-		# Comment Score PNG
+		# Comment Score PNG.
 		os.system('./csv_to_dat.py comment_score.csv > temp.dat')
 		os.system('sort -f temp.dat > comment_score.dat')
 		os.system('gnuplot < comment_score.plt > {}_c_score.png'.format(USER))
-		# Post Score PNG
+		# Post Score PNG.
 		os.system('./csv_to_dat.py post_score.csv > temp.dat')
 		os.system('sort -f temp.dat > post_score.dat')
 		os.system('gnuplot < post_score.plt > {}_p_score.png'.format(USER))
-		# Comment Count PNG
+		# Comment Count PNG.
 		os.system('./csv_to_dat.py comment_count.csv > temp.dat')
 		os.system('sort -f temp.dat > comment_count.dat')
 		os.system('gnuplot < comment_count.plt > {}_c_count.png'.format(USER))
-		# Post Count PNG
+		# Post Count PNG.
 		os.system('./csv_to_dat.py post_count.csv > temp.dat')
 		os.system('sort -f temp.dat > post_count.dat')
 		os.system('gnuplot < post_count.plt > {}_p_count.png'.format(USER))
-		# Count Average PNG
+		# Count Average PNG.
 		os.system('./csv_to_dat.py comment_average.csv > temp.dat')
 		os.system('sort -f temp.dat > comment_average.dat')
 		os.system('gnuplot < c_average.plt > {}_c_avg.png'.format(USER))
-		# Post Average PNG
+		# Post Average PNG.
 		os.system('./csv_to_dat.py post_average.csv > temp.dat')
 		os.system('sort -f temp.dat > post_average.dat')
 		os.system('gnuplot < p_average.plt > {}_p_avg.png'.format(USER))
-		# Clean up
+		# Clean up.
 		os.system('rm *.dat')
-		# Delete CSV file
+		# Delete CSV file.
 		if CSV == False:
 			os.system('rm *.csv')
 
