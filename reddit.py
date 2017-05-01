@@ -14,7 +14,7 @@ import requests
 import time
 
 # Define Variables:
-USER              = 'spez'
+USER              = 'inapoc'
 POSTS_PER_PAGE    = 25
 HEADERS           = {'user-agent': 'reddit-{}'.format(os.environ['USER'])}
 TYPE              = ''
