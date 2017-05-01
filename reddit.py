@@ -139,12 +139,48 @@ def find_family(BODY):
 			else:
 				family[word] = 1
 
-def make_csv():
-	with open('reddit.csv', 'wb') as csvfile:
-	    csvwriter = csv.writer(csvfile, delimiter=',', quoting=csv.QUOTE_MINIMAL)
-	    for subreddit in comment_scores:
-	    	if subreddit in post_scores:
-			    csvwriter.writerow([subreddit, comment_scores[subreddit], post_scores[subreddit]])
+def make_csv(CSV):
+	# Set string for CSV file name and write to CSV
+	CSV_FILE = ''
+	if CSV == 'comment':
+		CSV_FILE = 'comment.csv'
+		with open(CSV_FILE, 'wb') as csvfile:
+		    csvwriter = csv.writer(csvfile, delimiter=',', quoting=csv.QUOTE_MINIMAL)
+		    for subreddit in comment_scores:
+		    	if comment_scores[subreddit] >= 50:
+				    csvwriter.writerow([subreddit, comment_scores[subreddit]])
+		CSV_FILE = 'comment_count.csv'
+	    with open(CSV_FILE, 'wb') as csvfile:
+		    csvwriter = csv.writer(csvfile, delimiter=',', quoting=csv.QUOTE_MINIMAL)
+		    for subreddit in comments_interests:
+		    	if comments_interests[subreddit] >= 50:
+				    csvwriter.writerow([subreddit, comments_interests[subreddit]])
+	elif CSV == 'post':
+		CSV_FILE = 'post.csv'
+		with open(CSV_FILE, 'wb') as csvfile:
+		    csvwriter = csv.writer(csvfile, delimiter=',', quoting=csv.QUOTE_MINIMAL)
+		    for subreddit in post_scores:
+		    	if post_scores[subreddit] >= 50:
+				    csvwriter.writerow([subreddit, post_scores[subreddit]])
+		CSV_FILE = 'post_count.csv'
+		with open(CSV_FILE, 'wb') as csvfile:
+		    csvwriter = csv.writer(csvfile, delimiter=',', quoting=csv.QUOTE_MINIMAL)
+		    for subreddit in posts_interests:
+		    	if posts_interests[subreddit] >= 50:
+				    csvwriter.writerow([subreddit, posts_interests[subreddit]])
+	elif CSV == 'average':
+		CSV_FILE = 'comment_average.csv'
+		with open(CSV_FILE, 'wb') as csvfile:
+		    csvwriter = csv.writer(csvfile, delimiter=',', quoting=csv.QUOTE_MINIMAL)
+		    for subreddit in comment_scores:
+		    	if comment_scores[subreddit] >= 50:
+				    csvwriter.writerow([subreddit, comment_scores[subreddit]/comments_interests[subreddit]])
+		CSV_FILE = 'post_average.csv'
+		with open(CSV_FILE, 'wb') as csvfile:
+		    csvwriter = csv.writer(csvfile, delimiter=',', quoting=csv.QUOTE_MINIMAL)
+		    for subreddit in post_scores:
+		    	if post_scores[subreddit] >= 50:
+				    csvwriter.writerow([subreddit, post_scores[subreddit]/posts_interests[subreddit]])
 
 def store_heap(SCORE, BODY, TYPE):
 	node = myPair(score = SCORE, body = BODY)
@@ -276,18 +312,47 @@ if __name__ == '__main__':
 
 	# Generate CSV file.
 	if CSV:
-		make_csv()
+		make_csv('comment')
+		make_csv('post')
+		make_csv('average')
 
 	# Generate PNG
 	if PNG:
 		if CSV == False:
-			make_csv()
-		os.system('./score.py > score_temp.dat')       # TODO: new plt file and new png names
-		os.system('sort -f score_temp.dat > score.dat')
-		os.system('gnuplot < score.plt > {}.png'.format(USER))
-		os.system('rm score_temp.dat score.dat')
+			make_csv('comment')
+			make_csv('post')
+			make_csv('average')
+		# Comment Score PNG
+		os.system('./csv_to_dat.py comment.csv > temp.dat')
+		os.system('sort -f temp.dat > comment_score.dat')
+		os.system('gnuplot < comment_score.plt > {}_c_score.png'.format(USER))
+		'''
+		# Post Score PNG
+		os.system('./csv_to_dat.py post.csv > temp.dat')
+		os.system('sort -f temp.dat > post_score.dat')
+		os.system('gnuplot < post_score.plt > {}_p_score.png'.format(USER))
+		# Comment Count PNG
+		os.system('./csv_to_dat.py comment_count.csv > temp.dat')
+		os.system('sort -f temp.dat > comment_count.dat')
+		os.system('gnuplot < comment_count.plt > {}_c_count.png'.format(USER))
+		# Post Count PNG
+		os.system('./csv_to_dat.py post_count.csv > temp.dat')
+		os.system('sort -f temp.dat > post_count.dat')
+		os.system('gnuplot < post_count.plt > {}_p_count.png'.format(USER))
+		# Count Average PNG
+		os.system('./csv_to_dat.py comment_average.csv > temp.dat')
+		os.system('sort -f temp.dat > comment_average.dat')
+		os.system('gnuplot < c_average.plt > {}_c_avg.png'.format(USER))
+		# Post Average PNG
+		os.system('./csv_to_dat.py post_average.csv > temp.dat')
+		os.system('sort -f temp.dat > post_average.dat')
+		os.system('gnuplot < p_average.plt > {}_p_avg.png'.format(USER))
+		'''
+		# Clean up
+		os.system('rm *.dat')
+		# Delete CSV file
 		if CSV == False:
-			os.system('rm reddit.csv')
+			os.system('rm *.csv')
 
 
 
