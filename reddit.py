@@ -23,6 +23,15 @@ PNG               = False
 SILENT            = False
 
 # Heap Variables
+NUMTOPBOT 	    = 3
+COMMENTHEAP 	= []
+POSTHEAP 		= []
+
+# Define Dictionaries:
+posts_interests = {}
+comments_interests = {}
+interests = {}
+family = {}
 NUMTOPBOT 	      = 3      # Total number to print
 COMMENTHEAP 	  = []     # Heap with myPair tuples of score and body
 POSTHEAP 		  = []     # Heap with myPair tuples of score and body
@@ -72,6 +81,12 @@ def parse_json(URL_JSON):
 			store_heap(score, body, TYPE)
 			subreddit_score(subreddit, score, TYPE)
 
+			subreddit = get_data(URL_JSON, i, 'subreddit')
+			if subreddit in comments_interests:
+                        	comments_interests[subreddit] = comments_interests[subreddit] + 1
+                	else:
+                        	comments_interests[subreddit] = 1
+
 			find_family(body)    # Grep For Comments Based On Family.
 
 		# Get metadata for post/submitted.
@@ -85,6 +100,12 @@ def parse_json(URL_JSON):
 
 			store_heap(score, post_title, TYPE)
 			subreddit_score(subreddit, score, TYPE)
+
+			subreddit = get_data(URL_JSON, i, 'subreddit')
+			if subreddit in posts_interests:
+                        	posts_interests[subreddit] = posts_interests[subreddit] + 1
+                	else:
+                        	posts_interests[subreddit] = 1
 
 		# Update user's interests counter
 		if subreddit in interests:
@@ -198,7 +219,6 @@ def print_interests():
 		print '------------------------------------------'
 
 def print_family():
-	print '\n'
 	print USER+' has :'
 	print '------------------------------------------'
 	print '| {:>20} | {:>15} |'.format("family member", "# of occurences")
