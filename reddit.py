@@ -14,19 +14,28 @@ import requests
 import time
 
 # Define Variables:
-USER              = 'spez'
-POSTS_PER_PAGE    = 25
-HEADERS           = {'user-agent': 'reddit-{}'.format(os.environ['USER'])}
-TYPE              = ''
-CSV               = False
-PNG               = False
-SILENT            = False
+USER               = 'GB_LFC'
+POSTS_PER_PAGE     = 25
+HEADERS            = {'user-agent': 'reddit-{}'.format(os.environ['USER'])}
+TYPE               = ''
+CSV                = False
+PNG                = False
+SILENT             = False
 
 # Heap Variables
-NUMTOPBOT 	      = 3      # Total number to print
-COMMENTHEAP 	  = []     # Heap with myPair tuples of score and body
-POSTHEAP 		  = []     # Heap with myPair tuples of score and body
-myPair            = collections.namedtuple('myPair', ['score', 'body'])    # Define Object for use in the heap
+NUMTOPBOT          = 3
+COMMENTHEAP        = []
+POSTHEAP           = []
+
+# Define Dictionaries:
+posts_interests    = {}
+comments_interests = {}
+interests          = {}
+family             = {}
+NUMTOPBOT          = 3      # Total number to print
+COMMENTHEAP        = []     # Heap with myPair tuples of score and body
+POSTHEAP           = []     # Heap with myPair tuples of score and body
+myPair             = collections.namedtuple('myPair', ['score', 'body'])    # Define Object for use in the heap
 
 # Dictionaries
 interests         = {}     # Key: Subreddit       Value: Total occurrence
@@ -99,6 +108,12 @@ def parse_json(URL_JSON):
 			store_heap(score, post_title, TYPE)
 			subreddit_score(subreddit, score, TYPE)
 
+			subreddit = get_data(URL_JSON, i, 'subreddit')
+			if subreddit in posts_interests:
+                        	posts_interests[subreddit] = posts_interests[subreddit] + 1
+                	else:
+                        	posts_interests[subreddit] = 1
+
 		# Update user's interests counter
 		if subreddit in interests:
 			interests[subreddit] = interests[subreddit] + 1
@@ -146,12 +161,48 @@ def find_regex(BODY, URL):
 
 
 
-def make_csv():
-	with open('reddit.csv', 'wb') as csvfile:
-	    csvwriter = csv.writer(csvfile, delimiter=',', quoting=csv.QUOTE_MINIMAL)
-	    for subreddit in comment_scores:
-	    	if subreddit in post_scores:
-			    csvwriter.writerow([subreddit, comment_scores[subreddit], post_scores[subreddit]])
+def make_csv(CSV):
+	# Set string for CSV file name and write to CSV
+	CSV_FILE = ''
+	if CSV == 'comment':
+		CSV_FILE = 'comment_score.csv'
+		with open(CSV_FILE, 'wb') as csvfile:
+		    csvwriter = csv.writer(csvfile, delimiter=',', quoting=csv.QUOTE_MINIMAL)
+		    for subreddit in comment_scores:
+		    	if comment_scores[subreddit] >= 10:
+				    csvwriter.writerow([subreddit, comment_scores[subreddit]])
+		CSV_FILE = 'comment_count.csv'
+		with open(CSV_FILE, 'wb') as csvfile:
+		    csvwriter = csv.writer(csvfile, delimiter=',', quoting=csv.QUOTE_MINIMAL)
+		    for subreddit in comments_interests:
+		    	if comments_interests[subreddit] >= 10:
+				    csvwriter.writerow([subreddit, comments_interests[subreddit]])
+	elif CSV == 'post':
+		CSV_FILE = 'post_score.csv'
+		with open(CSV_FILE, 'wb') as csvfile:
+		    csvwriter = csv.writer(csvfile, delimiter=',', quoting=csv.QUOTE_MINIMAL)
+		    for subreddit in post_scores:
+		    	if post_scores[subreddit] >= 10:
+				    csvwriter.writerow([subreddit, post_scores[subreddit]])
+		CSV_FILE = 'post_count.csv'
+		with open(CSV_FILE, 'wb') as csvfile:
+		    csvwriter = csv.writer(csvfile, delimiter=',', quoting=csv.QUOTE_MINIMAL)
+		    for subreddit in posts_interests:
+		    	if posts_interests[subreddit] >= 10:
+				    csvwriter.writerow([subreddit, posts_interests[subreddit]])
+	elif CSV == 'average':
+		CSV_FILE = 'comment_average.csv'
+		with open(CSV_FILE, 'wb') as csvfile:
+		    csvwriter = csv.writer(csvfile, delimiter=',', quoting=csv.QUOTE_MINIMAL)
+		    for subreddit in comment_scores:
+		    	if comment_scores[subreddit] >= 10:
+				    csvwriter.writerow([subreddit, comment_scores[subreddit]/comments_interests[subreddit]])
+		CSV_FILE = 'post_average.csv'
+		with open(CSV_FILE, 'wb') as csvfile:
+		    csvwriter = csv.writer(csvfile, delimiter=',', quoting=csv.QUOTE_MINIMAL)
+		    for subreddit in post_scores:
+		    	if post_scores[subreddit] >= 10:
+				    csvwriter.writerow([subreddit, post_scores[subreddit]/posts_interests[subreddit]])
 
 def store_heap(SCORE, BODY, TYPE):
 	node = myPair(score = SCORE, body = BODY)
@@ -200,7 +251,7 @@ def print_subreddit_comment_score():
 	print '| {:>20} | {:>15} |'.format("Subreddit", "Score")
 	print '------------------------------------------'
 	for s in sorted(comment_scores, key=comment_scores.get, reverse=True):
-		if comment_scores[s] != 1:  # Ignore insignificant comment scores
+		if comment_scores[s] >= 30:  # Ignore insignificant comment scores
 			print '| {:>20} | {:>15} |'.format(s,comment_scores[s])
 			print '------------------------------------------'
 
@@ -211,7 +262,7 @@ def print_subreddit_post_score():
 	print '| {:>20} | {:>15} |'.format("Subreddit", "Score")
 	print '------------------------------------------'
 	for s in sorted(post_scores, key=post_scores.get, reverse=True):
-		if post_scores[s] != 1:     # Ignore insignificant post scores
+		if post_scores[s] >= 30:     # Ignore insignificant post scores
 			print '| {:>20} | {:>15} |'.format(s,post_scores[s])
 			print '------------------------------------------'
 
@@ -309,16 +360,44 @@ if __name__ == '__main__':
 
 	# Generate CSV file.
 	if CSV:
-		make_csv()
+		make_csv('comment')
+		make_csv('post')
+		make_csv('average')
 
 	# Generate PNG
 	if PNG:
 		if CSV == False:
-			make_csv()
-		os.system('./score.py > score_temp.dat')       # TODO: new plt file and new png names
-		os.system('sort -f score_temp.dat > score.dat')
-		os.system('gnuplot < score.plt > {}.png'.format(USER))
-		os.system('rm score_temp.dat score.dat')
+			make_csv('comment')
+			make_csv('post')
+			make_csv('average')
+		# Comment Score PNG
+		os.system('./csv_to_dat.py comment_score.csv > temp.dat')
+		os.system('sort -f temp.dat > comment_score.dat')
+		os.system('gnuplot < comment_score.plt > {}_c_score.png'.format(USER))
+		# Post Score PNG
+		os.system('./csv_to_dat.py post_score.csv > temp.dat')
+		os.system('sort -f temp.dat > post_score.dat')
+		os.system('gnuplot < post_score.plt > {}_p_score.png'.format(USER))
+		# Comment Count PNG
+		os.system('./csv_to_dat.py comment_count.csv > temp.dat')
+		os.system('sort -f temp.dat > comment_count.dat')
+		os.system('gnuplot < comment_count.plt > {}_c_count.png'.format(USER))
+		# Post Count PNG
+		os.system('./csv_to_dat.py post_count.csv > temp.dat')
+		os.system('sort -f temp.dat > post_count.dat')
+		os.system('gnuplot < post_count.plt > {}_p_count.png'.format(USER))
+		# Count Average PNG
+		os.system('./csv_to_dat.py comment_average.csv > temp.dat')
+		os.system('sort -f temp.dat > comment_average.dat')
+		os.system('gnuplot < c_average.plt > {}_c_avg.png'.format(USER))
+		# Post Average PNG
+		os.system('./csv_to_dat.py post_average.csv > temp.dat')
+		os.system('sort -f temp.dat > post_average.dat')
+		os.system('gnuplot < p_average.plt > {}_p_avg.png'.format(USER))
+		# Clean up
+		os.system('rm *.dat')
+		# Delete CSV file
 		if CSV == False:
-			os.system('rm reddit.csv')
+			os.system('rm *.csv')
+
 

@@ -8,7 +8,6 @@ set boxwidth .95 relative
 set ylabel "Score"
 set xtics rotate
 set xlabel "Subreddit"
-set title "Comment/Post Score Average vs. Subreddit"
+set title "Comment Score Average vs. Subreddit"
 
-plot	'score.dat' using 2:xtic(1) title "Comments",\
-	'score.dat' using 3 title "Posts"
+plot	'comment_average.dat' using 2:xtic(1) title "Average"
