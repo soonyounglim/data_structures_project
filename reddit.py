@@ -14,34 +14,34 @@ import requests
 import time
 
 # Define Variables:
-USER              = 'spez'
-POSTS_PER_PAGE    = 25
-HEADERS           = {'user-agent': 'reddit-{}'.format(os.environ['USER'])}
-TYPE              = ''
-CSV               = False
-PNG               = False
-SILENT            = False
+USER               = 'spez'
+POSTS_PER_PAGE     = 25
+HEADERS            = {'user-agent': 'reddit-{}'.format(os.environ['USER'])}
+TYPE               = ''
+CSV                = False
+PNG                = False
+SILENT             = False
 
 # Heap Variables
-NUMTOPBOT 	    = 3
-COMMENTHEAP 	= []
-POSTHEAP 		= []
+NUMTOPBOT          = 3
+COMMENTHEAP        = []
+POSTHEAP           = []
 
 # Define Dictionaries:
-posts_interests = {}
+posts_interests    = {}
 comments_interests = {}
-interests = {}
-family = {}
-NUMTOPBOT 	      = 3      # Total number to print
-COMMENTHEAP 	  = []     # Heap with myPair tuples of score and body
-POSTHEAP 		  = []     # Heap with myPair tuples of score and body
-myPair            = collections.namedtuple('myPair', ['score', 'body'])    # Define Object for use in the heap
+interests          = {}
+family             = {}
+NUMTOPBOT          = 3      # Total number to print
+COMMENTHEAP        = []     # Heap with myPair tuples of score and body
+POSTHEAP           = []     # Heap with myPair tuples of score and body
+myPair             = collections.namedtuple('myPair', ['score', 'body'])    # Define Object for use in the heap
 
 # Dictionaries
-interests         = {}     # Key: Subreddit       Value: Total occurrence
-family            = {}     # Key: Attribute       Value: Total occurrence
-comment_scores    = {}     # Key: Subreddit       Value: Score
-post_scores       = {}     # Key: Subreddit       Value: Score
+interests          = {}     # Key: Subreddit       Value: Total occurrence
+family             = {}     # Key: Attribute       Value: Total occurrence
+comment_scores     = {}     # Key: Subreddit       Value: Score
+post_scores        = {}     # Key: Subreddit       Value: Score
 
 # Define Functions:
 def usage(status):
@@ -193,7 +193,7 @@ def print_subreddit_comment_score():
 	print '| {:>20} | {:>15} |'.format("Subreddit", "Score")
 	print '------------------------------------------'
 	for s in sorted(comment_scores, key=comment_scores.get, reverse=True):
-		if comment_scores[s] != 1:  # Ignore insignificant comment scores
+		if comment_scores[s] >= 30:  # Ignore insignificant comment scores
 			print '| {:>20} | {:>15} |'.format(s,comment_scores[s])
 			print '------------------------------------------'
 
@@ -204,7 +204,7 @@ def print_subreddit_post_score():
 	print '| {:>20} | {:>15} |'.format("Subreddit", "Score")
 	print '------------------------------------------'
 	for s in sorted(post_scores, key=post_scores.get, reverse=True):
-		if post_scores[s] != 1:     # Ignore insignificant post scores
+		if post_scores[s] >= 30:     # Ignore insignificant post scores
 			print '| {:>20} | {:>15} |'.format(s,post_scores[s])
 			print '------------------------------------------'
 
@@ -219,6 +219,7 @@ def print_interests():
 		print '------------------------------------------'
 
 def print_family():
+	print '\n'
 	print USER+' has :'
 	print '------------------------------------------'
 	print '| {:>20} | {:>15} |'.format("family member", "# of occurences")
@@ -287,4 +288,6 @@ if __name__ == '__main__':
 		os.system('rm score_temp.dat score.dat')
 		if CSV == False:
 			os.system('rm reddit.csv')
+
+
 
