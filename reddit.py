@@ -30,9 +30,20 @@ myPair            = collections.namedtuple('myPair', ['score', 'body'])    # Def
 
 # Dictionaries
 interests         = {}     # Key: Subreddit       Value: Total occurrence
-family            = {}     # Key: Attribute       Value: Total occurrence
 comment_scores    = {}     # Key: Subreddit       Value: Score
 post_scores       = {}     # Key: Subreddit       Value: Score
+
+# Lists
+male_list         = []
+female_list       = []
+age_list          = []
+family_list       = []
+
+# Regular Expressions
+regex_male        = r'\b(I am|I am a|as a) (man|boy|guy|male)\b'
+regex_female      = r'\b(I am|I am a|as a) (woman|girl|lady|female)\b'
+regex_age         = r'\b(I am|I am a|I\'m|I\'m a).*[0-9]+.(years|year|yrs|yr).old\b'
+regex_family      = r'\b(I have|I have a|my|our).*(older|younger|step|twin)?.*(brother|bro|sister|sis|dad|daddy|papa|father|mom|mommy|mama|mother|cousin|uncle|aunt)\b'
 
 # Define Functions:
 def usage(status):
@@ -66,13 +77,14 @@ def parse_json(URL_JSON):
 		subreddit = get_data(URL_JSON, i, 'subreddit')
 		score = get_data(URL_JSON, i, 'score')
 		
+
 		# Get metadata for comments.
 		if (TYPE == 'comments'):
 			body = get_data(URL_JSON, i, 'body')
+			link_url = get_data(URL_JSON, i, 'link_url')
 			store_heap(score, body, TYPE)
 			subreddit_score(subreddit, score, TYPE)
-
-			find_family(body)    # Grep For Comments Based On Family.
+			find_regex(body, link_url)
 
 		# Get metadata for post/submitted.
 		else:
@@ -81,7 +93,8 @@ def parse_json(URL_JSON):
 
 			if self_post:
 				body = get_data(URL_JSON, i, 'selftext')
-				find_family(body)
+				url = URL_JSON['data']['children'][i]['data']['url']
+				find_regex(body, url)
 
 			store_heap(score, post_title, TYPE)
 			subreddit_score(subreddit, score, TYPE)
@@ -108,15 +121,30 @@ def get_next_page(TYPE, COUNT, NEXT_PAGE):
 	return url['data']['after']
 
 # Utility functions # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-def find_family(BODY):
-	f = open("family.txt")
-	for word in f.readlines():
-		word = word.strip();
-		if (re.search(word, BODY)):
-			if word in family:
-				family[word] = family[word] + 1
-			else:
-				family[word] = 1
+def find_regex(BODY, URL):
+	# Find Gender.
+	found_male = re.search(regex_male, BODY)
+	if found_male:
+		male_list.append(found_male.group())
+		male_list.append(URL)
+	found_female = re.search(regex_female, BODY)
+	if found_female:
+		female_list.append(found_female.group())
+		female_list.append(URL)
+
+	# Find Age.
+	found_age = re.search(regex_age, BODY)
+	if found_age:
+		age_list.append(found_age.group())
+		age_list.append(URL)
+
+	# Find Family.
+	found_family = re.search(regex_family, BODY)
+	if found_family:
+		family_list.append(found_family.group())
+		family_list.append(URL)
+
+
 
 def make_csv():
 	with open('reddit.csv', 'wb') as csvfile:
@@ -197,15 +225,41 @@ def print_interests():
 		print '| {:>20} | {:>15} |'.format(i,interests[i])
 		print '------------------------------------------'
 
-def print_family():
+def print_regex():
 	print '\n'
-	print USER+' has :'
+	print USER+' is a:'
 	print '------------------------------------------'
-	print '| {:>20} | {:>15} |'.format("family member", "# of occurences")
+	count = 0
+	if male_list:
+		for m in male_list:
+			print m
+
+	count = 0
+	if female_list:
+		for f in female_list:
+			print f
+
+	count = 0
+	if age_list:
+		for a in age_list:
+			print a
+
+	count = 0
+	if not (male_list or female_list or age_list):
+		print 'Cannot determine gender and age'
+
+	print '\n'
+	print USER+' has family members:'
 	print '------------------------------------------'
-	for f in sorted(family, key=family.get, reverse=True):
-		print '| {:>20} | {:>15} |'.format(f,family[f])
-		print '------------------------------------------'
+	count = 0
+	if family_list:
+		for fam in family_list:
+			count = count + 1
+			print fam
+			if (count % 2) == 0:
+				print '\n'
+	else:
+		print 'Cannot determine family'
 
 def print_time(start_time):
 	print("--- %s seconds ---" % (time.time() - start_time))
@@ -250,7 +304,7 @@ if __name__ == '__main__':
 		print_subreddit_comment_score()
 		print_subreddit_post_score()
 		print_interests()
-		print_family()
+		print_regex()
 		print_time(start_time)
 
 	# Generate CSV file.
