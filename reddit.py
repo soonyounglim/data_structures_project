@@ -38,21 +38,21 @@ POSTHEAP           = []     # Heap with myPair tuples of score and body
 myPair             = collections.namedtuple('myPair', ['score', 'body'])    # Define Object for use in the heap
 
 # Dictionaries
-interests         = {}     # Key: Subreddit       Value: Total occurrence
-comment_scores    = {}     # Key: Subreddit       Value: Score
-post_scores       = {}     # Key: Subreddit       Value: Score
+interests          = {}     # Key: Subreddit       Value: Total occurrence
+comment_scores     = {}     # Key: Subreddit       Value: Score
+post_scores        = {}     # Key: Subreddit       Value: Score
 
 # Lists
-male_list         = []
-female_list       = []
-age_list          = []
-family_list       = []
+male_list          = []
+female_list        = []
+age_list           = []
+family_list        = []
 
 # Regular Expressions
-regex_male        = r'\b(I am|I am a|as a) (man|boy|guy|male)\b'
-regex_female      = r'\b(I am|I am a|as a) (woman|girl|lady|female)\b'
-regex_age         = r'\b(I am|I am a|I\'m|I\'m a).*[0-9]+.(years|year|yrs|yr).old\b'
-regex_family      = r'\b(I have|I have a|my|our).*(older|younger|step|twin)?.*(brother|bro|sister|sis|dad|daddy|papa|father|mom|mommy|mama|mother|cousin|uncle|aunt)\b'
+regex_male         = r'\b(I am|I am a|as a) (man|boy|guy|male)\b'
+regex_female       = r'\b(I am|I am a|as a) (woman|girl|lady|female)\b'
+regex_age          = r'\b(I am|I am a|I\'m|I\'m a).*[0-9]+.(years|year|yrs|yr).old\b'
+regex_family       = r'\b(I have|I have a|my|our).*(older|younger|step|twin)?.*(brother|bro|sister|sis|dad|daddy|papa|father|mom|mommy|mama|mother|cousin|uncle|aunt)\b'
 
 # Define Functions:
 def usage(status):
@@ -85,7 +85,6 @@ def parse_json(URL_JSON):
 	for i in range(0, len(URL_JSON["data"]["children"])):
 		subreddit = get_data(URL_JSON, i, 'subreddit')
 		score = get_data(URL_JSON, i, 'score')
-		
 
 		# Get metadata for comments.
 		if (TYPE == 'comments'):
@@ -114,7 +113,7 @@ def parse_json(URL_JSON):
                 	else:
                         	posts_interests[subreddit] = 1
 
-		# Update user's interests counter
+		# Update user's interests counter.
 		if subreddit in interests:
 			interests[subreddit] = interests[subreddit] + 1
 		else:
@@ -160,7 +159,7 @@ def find_regex(BODY, URL):
 		family_list.append(URL)
 
 def make_csv(CSV):
-	# Set string for CSV file name and write to CSV
+	# Set string for CSV file name and write information to CSV file.
 	CSV_FILE = ''
 	if CSV == 'comment':
 		CSV_FILE = 'comment_score.csv'
@@ -203,10 +202,10 @@ def make_csv(CSV):
 				    csvwriter.writerow([subreddit, post_scores[subreddit]/posts_interests[subreddit]])
 
 def store_heap(SCORE, BODY, TYPE):
-	node = myPair(score = SCORE, body = BODY)
+	node = myPair(score = SCORE, body = BODY)   # a tuple storing the comment content (or post title) with its score
 	if TYPE == 'comments':
 		heappush(COMMENTHEAP, node)
-	else: # submitted
+	else: # submitted posts
 		heappush(POSTHEAP, node)
 
 def subreddit_score(SUBREDDIT, SCORE, TYPE):
@@ -215,7 +214,7 @@ def subreddit_score(SUBREDDIT, SCORE, TYPE):
 			comment_scores[SUBREDDIT] = comment_scores[SUBREDDIT] + SCORE
 		else:
 			comment_scores[SUBREDDIT] = 1
-	else:
+	else: # submitted posts
 		if SUBREDDIT in post_scores:
 			post_scores[SUBREDDIT] = post_scores[SUBREDDIT] + SCORE
 		else:
@@ -223,19 +222,23 @@ def subreddit_score(SUBREDDIT, SCORE, TYPE):
 
 # Print Functions # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 def print_top_bot(NUMTOPBOT=NUMTOPBOT):
+	# Top Comments
 	print "Top", NUMTOPBOT, "Comments:"
 	a = nlargest(NUMTOPBOT, enumerate(COMMENTHEAP), key=lambda x: x[1])
 	print_heap(a, 'comments')
 
+	# Bottom Comments
 	print "Bottom", NUMTOPBOT, "Comments:"
 	a = nsmallest(NUMTOPBOT, enumerate(COMMENTHEAP), key=lambda x: x[1])
 	print_heap(a, 'comments')
 
+	# Top Posts
 	print "Top", NUMTOPBOT, "Posts:"
 	a = nlargest(NUMTOPBOT, enumerate(POSTHEAP), key=lambda x: x[1])
 	print_heap(a, 'submitted')
 
 def print_heap(heap, TYPE=TYPE):   # Function that prints the heap
+	# Iterate through the tuple pairs and print the score and body.
 	for k,v in enumerate(heap):
 		if TYPE == 'comments':
 			print "#", k+1, "\tScore:", v[1][0], "\tComment:", v[1][1], "\n"
@@ -324,7 +327,10 @@ def print_time(start_time):
 
 # Main Execution # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 if __name__ == '__main__':
+	# Get start time.
 	start_time = time.time()
+	
+	# Parse through command line arguments.
 	args = sys.argv[1:]
 	while len(args) and args[0].startswith('-') and len(args[0]) > 1:
 		arg = args.pop(0)
