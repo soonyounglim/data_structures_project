@@ -36,7 +36,7 @@ Usage: reddit.py...
 &nbsp;
 &nbsp;
 ## Visuals
-    Print Out To The Console
+        Print Out To The Console
     Top comments/posts, the total score of user activity in a particular
     subreddit, general frequency of user activity in a particular subreddit,
     and a the list of user attributes that compromises the user's anonymity.
@@ -44,3 +44,9 @@ Usage: reddit.py...
     Created .png Files Via Gnuplot
     Post Score vs. Subreddit, Post Occurrence vs. Subreddit, and Post Average
     Score vs. Subreddit.
+## Google Slides Summary
+```html
+    <p>
+        Here are <a href="https://docs.google.com/presentation/d/1zbGLPmrcoX7tb0hec085Q4f09u6IRfYZ7Oe_VmhT3Yo/edit?usp=sharing">slides</a> that summarize our project.
+    </p>
+```
