@@ -4,7 +4,7 @@
     Description  :  A Python script that parses a reddit account's comments and posts.
 &nbsp;
 &nbsp;
-### General Idea
+## General Idea
         Reddit is a network of communities where people can become connected
     via similar interests and participate in discussion. In order to
     participate in this network, a person must create a reddit account in
@@ -17,9 +17,9 @@
     any particular family members.
 &nbsp;
 &nbsp;
-### Usage
+## Usage
 ```console
-$ reddit.py -h
+$ ./reddit.py -h
 Usage: reddit.py...
     -c              Create a csv file
     -n NUMBER       The number of top and bottom comment/post scores
@@ -29,15 +29,16 @@ Usage: reddit.py...
 ```
 &nbsp;
 &nbsp;
-### Data Structures Implemented
+## Data Structures Implemented
     1. Dictionaries  :  Has the syntax of { key=subreddit, value=score }.
     2. Heaps  :  Ordered by comment/post score that displays the contents of -n comments/posts.
     3. Lists  :  Stores comments/posts that were successfully found via re.search().
 &nbsp;
-### Visuals
+&nbsp;
+## Visuals
         1. Print out to the console: top comments/posts, the total score of
     user activity in a particular subreddit, general frequency of user
     activity in a particular subreddit, and a the list of user attributes that
     compromises the user's anonymity.
-    2. Created .png files via gnuplot: Post Score vs. Subreddit, Post
+        2. Created .png files via gnuplot: Post Score vs. Subreddit, Post
     Occurrence vs. Subreddit, and Post Average Score vs. Subreddit.
