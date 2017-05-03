@@ -44,5 +44,7 @@ Usage: reddit.py...
     Created .png Files Via Gnuplot
     Post Score vs. Subreddit, Post Occurrence vs. Subreddit, and Post Average
     Score vs. Subreddit.
+&nbsp;
+&nbsp;
 ## Google Slides Summary 
-Here are <a href="https://docs.google.com/presentation/d/1zbGLPmrcoX7tb0hec085Q4f09u6IRfYZ7Oe_VmhT3Yo/edit?usp=sharing">slides</a> that summarize our project.
+Here are <a href="https://docs.google.com/presentation/d/1zbGLPmrcoX7tb0hec085Q4f09u6IRfYZ7Oe_VmhT3Yo/edit?usp=sharing">slides</a> that summarize our project with pictures and examples.
