@@ -41,7 +41,7 @@ Usage: reddit.py...
     subreddit, general frequency of user activity in a particular subreddit,
     and a the list of user attributes that compromises the user's anonymity.
     
-    Created .png Files Via Gnuplot
+        Created .png Files Via Gnuplot
     Post Score vs. Subreddit, Post Occurrence vs. Subreddit, and Post Average
     Score vs. Subreddit.
 &nbsp;
