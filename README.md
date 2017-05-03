@@ -1,6 +1,6 @@
-# reddit.py  :  A Python script that parses a redditor's comments and posts.
-## Description  :  Data Structures Project Spring 2017
-## Developers   :  Soonyoung Lim, Anthony Luc, and Donald Luc
+# Project Name  :  Reddit
+Description  :  Data Structures Project Spring 2017
+Developers   :  Soonyoung Lim, Anthony Luc, and Donald Luc
 &nbsp;
 &nbsp;
 ### General Idea
