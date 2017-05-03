@@ -1,6 +1,7 @@
 # Project Name  :  Reddit
-### Description  :  Data Structures Project Spring 2017
-### Developers   :  Soonyoung Lim, Anthony Luc, and Donald Luc
+    Developers   :  Soonyoung Lim, Anthony Luc, and Donald Luc
+    Course       :  Data Structures Project Spring 2017 
+    Description  :  A Python script that parses a reddit account's comments and posts.
 &nbsp;
 &nbsp;
 ### General Idea
