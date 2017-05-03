@@ -1,6 +1,6 @@
 # Project Name  :  Reddit
-Description  :  Data Structures Project Spring 2017
-Developers   :  Soonyoung Lim, Anthony Luc, and Donald Luc
+### Description  :  Data Structures Project Spring 2017
+### Developers   :  Soonyoung Lim, Anthony Luc, and Donald Luc
 &nbsp;
 &nbsp;
 ### General Idea
