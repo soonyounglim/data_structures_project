@@ -36,9 +36,11 @@ Usage: reddit.py...
 &nbsp;
 &nbsp;
 ## Visuals
-        1. Print out to the console: top comments/posts, the total score of
-    user activity in a particular subreddit, general frequency of user
-    activity in a particular subreddit, and a the list of user attributes that
-    compromises the user's anonymity.
-        2. Created .png files via gnuplot: Post Score vs. Subreddit, Post
-    Occurrence vs. Subreddit, and Post Average Score vs. Subreddit.
+    Print Out To The Console
+    Top comments/posts, the total score of user activity in a particular
+    subreddit, general frequency of user activity in a particular subreddit,
+    and a the list of user attributes that compromises the user's anonymity.
+    
+    Created .png Files Via Gnuplot
+    Post Score vs. Subreddit, Post Occurrence vs. Subreddit, and Post Average
+    Score vs. Subreddit.
