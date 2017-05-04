@@ -94,6 +94,12 @@ def parse_json(URL_JSON):
 			subreddit_score(subreddit, score, TYPE)
 			find_regex(body, link_url)
 
+			# Increment subreddit count for comments
+			if subreddit in comments_interests:
+				comments_interests[subreddit] = comments_interests[subreddit] + 1
+			else:
+				comments_interests[subreddit] = 1
+
 		# Get metadata for post/submitted.
 		else:
 			post_title = get_data(URL_JSON, i, 'title')
@@ -107,11 +113,11 @@ def parse_json(URL_JSON):
 			store_heap(score, post_title, TYPE)
 			subreddit_score(subreddit, score, TYPE)
 
-			subreddit = get_data(URL_JSON, i, 'subreddit')
+			# Increment subreddit count for posts
 			if subreddit in posts_interests:
-                        	posts_interests[subreddit] = posts_interests[subreddit] + 1
-                	else:
-                        	posts_interests[subreddit] = 1
+				posts_interests[subreddit] = posts_interests[subreddit] + 1
+			else:
+				posts_interests[subreddit] = 1
 
 		# Update user's interests counter.
 		if subreddit in interests:
@@ -164,42 +170,42 @@ def make_csv(CSV):
 	if CSV == 'comment':
 		CSV_FILE = 'comment_score.csv'
 		with open(CSV_FILE, 'wb') as csvfile:
-		    csvwriter = csv.writer(csvfile, delimiter=',', quoting=csv.QUOTE_MINIMAL)
-		    for subreddit in comment_scores:
-		    	if comment_scores[subreddit] >= 10:
-				    csvwriter.writerow([subreddit, comment_scores[subreddit]])
+			csvwriter = csv.writer(csvfile, delimiter=',', quoting=csv.QUOTE_MINIMAL)
+			for subreddit in comment_scores:
+				if comment_scores[subreddit] >= 10:
+					csvwriter.writerow([subreddit, comment_scores[subreddit]])
 		CSV_FILE = 'comment_count.csv'
 		with open(CSV_FILE, 'wb') as csvfile:
-		    csvwriter = csv.writer(csvfile, delimiter=',', quoting=csv.QUOTE_MINIMAL)
-		    for subreddit in comments_interests:
-		    	if comments_interests[subreddit] >= 10:
-				    csvwriter.writerow([subreddit, comments_interests[subreddit]])
+			csvwriter = csv.writer(csvfile, delimiter=',', quoting=csv.QUOTE_MINIMAL)
+			for subreddit in comments_interests:
+				if comments_interests[subreddit] >= 10:
+					csvwriter.writerow([subreddit, comments_interests[subreddit]])
 	elif CSV == 'post':
 		CSV_FILE = 'post_score.csv'
 		with open(CSV_FILE, 'wb') as csvfile:
-		    csvwriter = csv.writer(csvfile, delimiter=',', quoting=csv.QUOTE_MINIMAL)
-		    for subreddit in post_scores:
-		    	if post_scores[subreddit] >= 10:
-				    csvwriter.writerow([subreddit, post_scores[subreddit]])
+			csvwriter = csv.writer(csvfile, delimiter=',', quoting=csv.QUOTE_MINIMAL)
+			for subreddit in post_scores:
+				if post_scores[subreddit] >= 10:
+					csvwriter.writerow([subreddit, post_scores[subreddit]])
 		CSV_FILE = 'post_count.csv'
 		with open(CSV_FILE, 'wb') as csvfile:
-		    csvwriter = csv.writer(csvfile, delimiter=',', quoting=csv.QUOTE_MINIMAL)
-		    for subreddit in posts_interests:
-		    	if posts_interests[subreddit] >= 10:
-				    csvwriter.writerow([subreddit, posts_interests[subreddit]])
+			csvwriter = csv.writer(csvfile, delimiter=',', quoting=csv.QUOTE_MINIMAL)
+			for subreddit in posts_interests:
+				if posts_interests[subreddit] >= 10:
+					csvwriter.writerow([subreddit, posts_interests[subreddit]])
 	elif CSV == 'average':
 		CSV_FILE = 'comment_average.csv'
 		with open(CSV_FILE, 'wb') as csvfile:
-		    csvwriter = csv.writer(csvfile, delimiter=',', quoting=csv.QUOTE_MINIMAL)
-		    for subreddit in comment_scores:
-		    	if comment_scores[subreddit] >= 10:
-				    csvwriter.writerow([subreddit, comment_scores[subreddit]/comments_interests[subreddit]])
+			csvwriter = csv.writer(csvfile, delimiter=',', quoting=csv.QUOTE_MINIMAL)
+			for subreddit in comment_scores:
+				if comment_scores[subreddit] >= 10:
+					csvwriter.writerow([subreddit, comment_scores[subreddit]/comments_interests[subreddit]])
 		CSV_FILE = 'post_average.csv'
 		with open(CSV_FILE, 'wb') as csvfile:
-		    csvwriter = csv.writer(csvfile, delimiter=',', quoting=csv.QUOTE_MINIMAL)
-		    for subreddit in post_scores:
-		    	if post_scores[subreddit] >= 10:
-				    csvwriter.writerow([subreddit, post_scores[subreddit]/posts_interests[subreddit]])
+			csvwriter = csv.writer(csvfile, delimiter=',', quoting=csv.QUOTE_MINIMAL)
+			for subreddit in post_scores:
+				if post_scores[subreddit] >= 10:
+					csvwriter.writerow([subreddit, post_scores[subreddit]/posts_interests[subreddit]])
 
 def store_heap(SCORE, BODY, TYPE):
 	node = myPair(score = SCORE, body = BODY)   # a tuple storing the comment content (or post title) with its score
